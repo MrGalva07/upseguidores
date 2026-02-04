@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="UpSeguidores">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#00C853"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#grad)"/>
+
+  <!-- Arrow Up -->
+  <path d="M32 16 L46 32 H38 V46 H26 V32 H18 Z" fill="#ffffff"/>
+
+</svg>
