@@ -110,11 +110,310 @@ nav ul li a:hover {
     transition: all 0.3s ease;
 }
 
-/* Seção Comparativo Instagram - HORIZONTAL */
+/* ============================================= */
+/* SEÇÃO PACOTES COM DESCONTO - COM NOVO SVG PIX */
+/* ============================================= */
+
+.pacotes-desconto {
+    background-color: #f8f9fa;
+    padding: 80px 0;
+    margin-top: 70px;
+}
+
+.pacotes-desconto h2 {
+    font-size: 2.5rem;
+    color: #1a1a1a;
+    margin-bottom: 15px;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto 50px;
+}
+
+.pacotes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.rede-social-div {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.instagram-div {
+    border-top: 4px solid #E1306C;
+}
+
+.tiktok-div {
+    border-top: 4px solid #000000;
+}
+
+.rede-social-title {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rede-social-title i {
+    font-size: 2rem;
+}
+
+.rede-social-title .fa-instagram {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.rede-social-title .fa-tiktok {
+    color: #000000;
+}
+
+.carrossel-wrapper {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.carrossel-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.emoji-flag {
+    width: 20px;
+    height: 14px;
+}
+
+.carrossel-instagram-br,
+.carrossel-instagram-mix,
+.carrossel-tiktok-br,
+.carrossel-tiktok-mix {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #f8f9fa;
+    padding: 20px 0;
+}
+
+.carrossel-inner {
+    display: flex;
+    gap: 25px;
+    transition: transform 0.3s ease;
+    padding: 0 10px;
+}
+
+.pacote-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px 20px;
+    min-width: 280px;
+    max-width: 280px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.pacote-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.pacote-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.pacote-card[data-rede="instagram"] .pacote-icon {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.pacote-card[data-rede="tiktok"] .pacote-icon {
+    background: linear-gradient(45deg, #000000, #00f2ea, #ff0050);
+}
+
+.pacote-quantidade {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.pacote-label {
+    font-size: 0.9rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+.pacote-preco-antigo {
+    margin-bottom: 5px;
+}
+
+.preco-riscado {
+    font-size: 1.1rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 500;
+}
+
+.pacote-preco-atual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.preco-novo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #25D366;
+}
+
+/* NOVO ESTILO PARA SVG PIX */
+.pix-icon {
+    width: 32px;
+    height: 32px;
+    fill: #32bcad;
+    filter: drop-shadow(0 2px 3px rgba(50, 188, 173, 0.3));
+}
+
+.pix-icon-green {
+    fill: #25D366;
+}
+
+.pacote-economia {
+    margin-bottom: 5px;
+}
+
+.economia-badge {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.whatsapp-pacote-btn {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    border: none;
+    padding: 14px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: auto;
+}
+
+.whatsapp-pacote-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+}
+
+.carrossel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #333;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.carrossel-btn:hover {
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    color: #d42a7f;
+}
+
+.carrossel-prev {
+    left: 10px;
+}
+
+.carrossel-next {
+    right: 10px;
+}
+
+.disclaimer-pacotes {
+    margin-top: 40px;
+    padding: 20px;
+    background: #fff8e1;
+    border-radius: 10px;
+    border-left: 4px solid #FFC107;
+    text-align: center;
+}
+
+.disclaimer-pacotes p {
+    color: #333;
+    font-size: 0.95rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.disclaimer-pacotes i {
+    color: #FFC107;
+    font-size: 1.2rem;
+}
+
+/* ============================================= */
+/* SEÇÃO COMPARATIVO INSTAGRAM - HORIZONTAL */
+/* ============================================= */
+
 .instagram-comparativo {
     background-color: #fafafa;
-    padding: 100px 0 60px;
-    margin-top: 70px;
+    padding: 80px 0;
     border-bottom: 1px solid #dbdbdb;
 }
 
@@ -349,7 +648,10 @@ nav ul li a:hover {
     animation: pulse 1.5s infinite;
 }
 
-/* Hero Section - ATUALIZADA */
+/* ============================================= */
+/* HERO SECTION */
+/* ============================================= */
+
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80') no-repeat center center/cover;
     color: white;
@@ -439,7 +741,10 @@ nav ul li a:hover {
     transform: translateY(-3px);
 }
 
-/* Seção Processo */
+/* ============================================= */
+/* SEÇÃO PROCESSO */
+/* ============================================= */
+
 .processo {
     background-color: #fcf3f8;
 }
@@ -490,7 +795,10 @@ nav ul li a:hover {
     font-size: 1rem;
 }
 
-/* Seção de Vantagens */
+/* ============================================= */
+/* SEÇÃO DE VANTAGENS */
+/* ============================================= */
+
 .benefits {
     background-color: #f0f7ff;
 }
@@ -559,7 +867,10 @@ nav ul li a:hover {
     font-size: 0.95rem;
 }
 
-/* Seção de Serviços - Redes Sociais */
+/* ============================================= */
+/* SEÇÃO DE SERVIÇOS - REDES SOCIAIS */
+/* ============================================= */
+
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -629,7 +940,10 @@ nav ul li a:hover {
     text-decoration: underline;
 }
 
-/* Seção de Depoimentos - CORRIGIDA COM ALTURAS REAIS */
+/* ============================================= */
+/* SEÇÃO DE DEPOIMENTOS */
+/* ============================================= */
+
 .testimonials {
     background-color: #fcf3f8;
 }
@@ -715,7 +1029,10 @@ nav ul li a:hover {
     background: linear-gradient(135deg, #b81c6b 0%, #6c2c8e 100%);
 }
 
-/* Seção FAQ */
+/* ============================================= */
+/* SEÇÃO FAQ */
+/* ============================================= */
+
 .faq-container {
     max-width: 800px;
     margin: 0 auto;
@@ -752,7 +1069,10 @@ nav ul li a:hover {
     padding: 20px;
 }
 
-/* Footer */
+/* ============================================= */
+/* FOOTER */
+/* ============================================= */
+
 footer {
     background: linear-gradient(135deg, #d42a7f 0%, #8a3ab9 100%);
     color: white;
@@ -849,13 +1169,15 @@ footer {
     opacity: 0.7;
 }
 
-/* Animações */
+/* ============================================= */
+/* ANIMAÇÕES */
+/* ============================================= */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(20px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
@@ -868,9 +1190,391 @@ footer {
     100% { transform: scale(1); }
 }
 
-/* Responsividade */
-@media (max-width: 968px) {
-    /* Menu Hamburguer */
+/* ANIMAÇÃO PARA OS NÚMEROS DO COMPARATIVO */
+@keyframes countUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Classe para animação dos números */
+.number-animate {
+    animation: countUp 0.8s ease-out forwards;
+}
+
+/* ANIMAÇÃO PARA O COMPARATIVO HOVER */
+.instrucao-animacao {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Efeito de destaque nos números quando animados */
+.perfil-depois .stat-number {
+    position: relative;
+}
+
+.perfil-depois .stat-number:after {
+    content: '↑';
+    position: absolute;
+    right: -20px;
+    top: 5px;
+    color: #25D366;
+    font-weight: bold;
+    animation: floatUp 1s ease-out infinite;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0); opacity: 0; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-10px); opacity: 0; }
+}
+
+/* ============================================= */
+/* BADGES DE ECONOMIA POR NÍVEL DE DESCONTO */
+/* ============================================= */
+
+.economia-badge.low-discount {
+    background: linear-gradient(135deg, #FFC107, #FF9800);
+    color: #000;
+}
+
+.economia-badge.medium-discount {
+    background: linear-gradient(135deg, #FF9800, #F44336);
+    color: #fff;
+}
+
+.economia-badge.high-discount {
+    background: linear-gradient(135deg, #F44336, #D32F2F);
+    color: #fff;
+    animation: pulse-high 2s infinite;
+}
+
+@keyframes pulse-high {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Melhoria visual para o badge */
+.economia-badge {
+    transition: all 0.3s ease;
+    cursor: help;
+    position: relative;
+}
+
+.economia-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Tooltip para mostrar valores exatos */
+.economia-badge::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.economia-badge:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 5px);
+}
+
+/* ============================================= */
+/* ESTILO PARA O ÍCONE DA BANDEIRA DO BRASIL NOS TÍTULOS */
+/* ============================================= */
+
+/* Container do subtítulo com a bandeira */
+.carrossel-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+/* Ícone da bandeira do Brasil */
+.carrossel-subtitle .brazil-flag {
+    width: 28px;
+    height: 28px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+/* Efeito hover sutil na bandeira */
+.carrossel-subtitle:hover .brazil-flag {
+    transform: scale(1.05);
+}
+
+/* Estilo específico para o ícone do planeta */
+.carrossel-subtitle .globe-icon {
+    color: #00A8FF;
+    font-size: 1.4rem;
+    transition: transform 0.3s ease;
+}
+
+.carrossel-subtitle:hover .globe-icon {
+    transform: rotate(10deg);
+}
+
+/* ============================================= */
+/* CORREÇÕES DE RESPONSIVIDADE ESPECÍFICAS */
+/* ============================================= */
+
+/* Ajuste geral para evitar overflow horizontal */
+@media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+    
+    section {
+        padding: 50px 0;
+    }
+    
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 30px;
+    }
+    
+    /* CORREÇÃO PARA PACOTES - MOBILE */
+    .pacotes-desconto {
+        padding: 40px 0;
+        margin-top: 60px;
+    }
+    
+    .pacotes-container {
+        gap: 30px;
+    }
+    
+    .rede-social-div {
+        padding: 20px 15px;
+        margin: 0 5px;
+        border-radius: 10px;
+    }
+    
+    .rede-social-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+    
+    .carrossel-subtitle {
+        font-size: 1.1rem;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .carrossel-inner {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 15px;
+        padding: 10px 5px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #d42a7f #f0f0f0;
+    }
+    
+    .carrossel-inner::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    .carrossel-inner::-webkit-scrollbar-thumb {
+        background: #d42a7f;
+        border-radius: 2px;
+    }
+    
+    .pacote-card {
+        min-width: 220px !important;
+        max-width: 220px !important;
+        padding: 20px 15px;
+        scroll-snap-align: start;
+        flex-shrink: 0;
+    }
+    
+    .pacote-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .pacote-quantidade {
+        font-size: 2rem;
+    }
+    
+    .pacote-label {
+        font-size: 0.8rem;
+    }
+    
+    .preco-riscado {
+        font-size: 0.95rem;
+    }
+    
+    .preco-novo {
+        font-size: 1.6rem;
+    }
+    
+    .pix-icon {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .economia-badge {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+    }
+    
+    .whatsapp-pacote-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        gap: 8px;
+    }
+    
+    .carrossel-btn {
+        display: none; /* Esconde botões de navegação no mobile */
+    }
+    
+    .disclaimer-pacotes {
+        margin-top: 30px;
+        padding: 15px;
+        font-size: 0.85rem;
+    }
+    
+    .disclaimer-pacotes p {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    /* CORREÇÃO PARA COMPARATIVO - MOBILE */
+    .instagram-comparativo {
+        padding: 40px 0 20px;
+    }
+    
+    .comparativo-title h2 {
+        font-size: 1.8rem;
+    }
+    
+    .comparativo-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 0 15px;
+    }
+    
+    .perfil-instagram {
+        max-width: 100% !important;
+        width: 100%;
+        padding: 25px 20px;
+        margin: 0;
+    }
+    
+    .comparativo-divider {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        width: 100%;
+        height: auto;
+        margin: 20px 0;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .divider-line {
+        width: 100px;
+        height: 2px;
+        margin: 0 10px;
+        background: linear-gradient(to right, transparent, #d42a7f, #8a3ab9, transparent);
+    }
+    
+    .arrow-down {
+        transform: rotate(90deg);
+        font-size: 1.2rem;
+    }
+    
+    .perfil-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .perfil-foto {
+        margin-right: 0;
+        width: 80px;
+        height: 80px;
+    }
+    
+    .perfil-info h3 {
+        font-size: 1.4rem;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    /* CORREÇÃO PARA HERO - MOBILE */
+    .hero {
+        padding: 140px 0 60px;
+        min-height: auto;
+        margin-top: 60px;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+        padding: 0 10px;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+        padding: 0 15px;
+        margin-bottom: 30px;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+    
+    .whatsapp-btn,
+    .secondary-btn {
+        width: 100%;
+        max-width: 300px;
+        padding: 14px 25px;
+    }
+    
+    /* MENU HAMBURGUER */
     .menu-toggle {
         display: flex;
     }
@@ -879,7 +1583,7 @@ footer {
         position: fixed;
         top: 0;
         right: -300px;
-        width: 300px;
+        width: 280px;
         height: 100vh;
         background: linear-gradient(135deg, #d42a7f 0%, #8a3ab9 100%);
         transition: right 0.3s ease;
@@ -908,10 +1612,6 @@ footer {
         border-radius: 5px;
     }
 
-    nav ul li a:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
     /* Animação do menu hamburguer */
     .menu-toggle.active span:nth-child(1) {
         transform: rotate(45deg) translate(5px, 5px);
@@ -924,335 +1624,497 @@ footer {
     .menu-toggle.active span:nth-child(3) {
         transform: rotate(-45deg) translate(7px, -6px);
     }
-
-    /* Ajustes de layout para mobile */
-    .header-content {
-        padding: 0 15px;
-    }
-
-    .comparativo-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-    }
     
-    .comparativo-divider {
-        position: relative;
-        top: 0;
-        left: 0;
-        transform: none;
-        flex-direction: row;
-        width: auto;
-        height: auto;
-        margin: 20px 0;
-    }
-    
-    .divider-line {
-        width: 150px;
-        height: 2px;
-        margin: 0 10px;
-        background: linear-gradient(to right, transparent, #d42a7f, #8a3ab9, transparent);
-    }
-    
-    .arrow-down {
-        transform: rotate(90deg);
-    }
-    
-    .comparativo-title h2 {
-        font-size: 1.8rem;
-    }
-
-    .perfil-instagram {
-        max-width: 500px;
-        width: 100%;
-    }
-
-    /* Hero Section - RESPONSIVA */
-    .hero {
-        min-height: 90vh;
-        padding: 150px 0 80px;
-        margin-top: 60px;
-    }
-    
-    .hero h1 {
-        font-size: 2.5rem;
-        padding: 0 15px;
-        margin-bottom: 20px;
-    }
-    
-    .subtitle {
-        font-size: 1.2rem;
-        padding: 0 20px;
-        margin-bottom: 35px;
-    }
-    
-    .cta-buttons {
-        gap: 20px;
-        margin-top: 35px;
-        padding: 0 15px;
-    }
-    
-    .whatsapp-btn,
-    .secondary-btn {
-        width: 90%;
-        max-width: 350px;
-        justify-content: center;
-    }
-
-    h2 {
-        font-size: 2rem;
-    }
-
+    /* Grids responsivos */
+    .processo-grid,
     .benefits-grid,
-    .services-grid,
-    .processo-grid {
+    .services-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
     }
-
-    /* Ajustes para depoimentos em tablet - RESPEITA ALTURA REAL */
-    .testimonial-slide {
+    
+    .etapa,
+    .benefit-card,
+    .service-card {
         padding: 25px 20px;
     }
     
-    .testimonial-img {
-        max-height: 350px;
-    }
-    
-    .testimonial-text {
-        margin-top: 20px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .hero {
-        padding: 140px 0 70px;
-        min-height: 85vh;
-    }
-    
-    .hero h1 {
-        font-size: 2.2rem;
-        padding: 0 15px;
-    }
-    
-    .subtitle {
-        font-size: 1.1rem;
-        padding: 0 15px;
-        margin-bottom: 30px;
-    }
-    
-    /* Ajustes para depoimentos em mobile médio */
+    /* Depoimentos mobile */
     .testimonial-slide {
         padding: 20px 15px;
-    }
-    
-    .testimonial-img {
-        max-height: 300px;
-    }
-    
-    .testimonial-text {
-        margin-top: 15px;
-        font-size: 0.95rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .logo {
-        font-size: 1.5rem;
-    }
-
-    .instagram-comparativo {
-        padding: 80px 0 30px;
-    }
-
-    .perfil-instagram {
-        padding: 25px 20px;
-    }
-
-    .perfil-foto {
-        width: 70px;
-        height: 70px;
-        margin-right: 15px;
-    }
-
-    .perfil-foto i {
-        font-size: 2.2rem;
-    }
-
-    .perfil-info h3 {
-        font-size: 1.4rem;
-    }
-
-    .stat-number {
-        font-size: 1.8rem;
-    }
-
-    /* Hero Section - MOBILE PEQUENO */
-    .hero {
-        padding: 120px 0 60px;
-        min-height: 80vh;
-        margin-top: 60px;
-    }
-    
-    .hero h1 {
-        font-size: 1.9rem;
-        padding: 0 10px;
-        margin-bottom: 20px;
-        line-height: 1.3;
-    }
-    
-    .subtitle {
-        font-size: 1rem;
-        padding: 0 10px;
-        margin-bottom: 25px;
-        line-height: 1.5;
-    }
-    
-    .cta-buttons {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        margin-top: 30px;
-        padding: 0 10px;
-    }
-    
-    .whatsapp-btn,
-    .secondary-btn {
-        width: 100%;
-        max-width: 280px;
-        padding: 14px 25px;
-        font-size: 1rem;
-    }
-    
-    .whatsapp-btn i,
-    .secondary-btn i {
-        font-size: 1.2rem;
-        margin-right: 8px;
-    }
-    
-    /* Ajustes para depoimentos em mobile pequeno */
-    .testimonial-slide {
-        padding: 15px 10px;
     }
     
     .testimonial-img {
         max-height: 250px;
     }
     
-    .testimonial-text {
-        margin-top: 15px;
-        font-size: 0.9rem;
-    }
-    
-    .footer-logo {
-        font-size: 1.5rem;
+    /* Footer mobile */
+    .footer-links {
+        flex-direction: column;
+        gap: 10px;
     }
     
     .footer-links a {
-        margin: 10px;
+        margin: 5px 0;
     }
-
-    .footer-legal {
-        font-size: 0.75rem;
+    
+    .social-icons a {
+        font-size: 1.3rem;
+        margin: 0 8px;
+    }
+    
+    .legal-links {
+        flex-direction: column;
+        gap: 10px;
     }
 }
 
-@media (max-width: 360px) {
+/* Ajustes para mobile pequeno (até 480px) */
+@media (max-width: 480px) {
     .hero {
-        padding: 110px 0 50px;
-        min-height: 75vh;
+        padding: 120px 0 50px;
     }
     
     .hero h1 {
-        font-size: 1.7rem;
+        font-size: 1.8rem;
     }
     
     .subtitle {
-        font-size: 0.95rem;
+        font-size: 1rem;
     }
     
-    .cta-buttons {
-        margin-top: 25px;
+    .pacote-card {
+        min-width: 180px !important;
+        max-width: 180px !important;
+        padding: 15px 12px;
     }
     
-    /* Ajustes para telas muito pequenas */
-    .testimonial-slide {
-        padding: 15px 8px;
+    .pacote-quantidade {
+        font-size: 1.8rem;
+    }
+    
+    .preco-novo {
+        font-size: 1.4rem;
+    }
+    
+    .pix-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .whatsapp-pacote-btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+    
+    .perfil-instagram {
+        padding: 20px 15px;
+    }
+    
+    .perfil-foto {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .stat-number {
+        font-size: 1.6rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
     }
     
     .testimonial-img {
         max-height: 200px;
     }
     
-    .testimonial-text {
-        margin-top: 10px;
-        font-size: 0.85rem;
+    .carrossel-subtitle .brazil-flag {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .carrossel-subtitle {
+        font-size: 1rem;
     }
 }
 
-/* Ajuste para garantir que o conteúdo não fique cortado */
-@media (max-height: 600px) {
-    .hero {
-        min-height: auto;
-        padding: 120px 0 60px;
+/* Ajustes para telas muito pequenas (até 360px) */
+@media (max-width: 360px) {
+    .pacote-card {
+        min-width: 160px !important;
+        max-width: 160px !important;
+        padding: 12px 10px;
+    }
+    
+    .pacote-quantidade {
+        font-size: 1.6rem;
+    }
+    
+    .preco-novo {
+        font-size: 1.3rem;
     }
     
     .hero h1 {
-        font-size: 2rem;
-        margin-bottom: 15px;
+        font-size: 1.6rem;
     }
     
-    .subtitle {
+    .whatsapp-btn,
+    .secondary-btn {
+        padding: 12px 20px;
         font-size: 1rem;
-        margin-bottom: 20px;
-    }
-    
-    .cta-buttons {
-        margin-top: 25px;
-    }
-    
-    /* Ajuste para depoimentos em telas baixas */
-    .testimonial-img {
-        max-height: 250px;
     }
 }
 
 /* Ajuste para dispositivos em modo paisagem (landscape) */
 @media (max-height: 500px) and (orientation: landscape) {
     .hero {
+        padding: 100px 0 40px;
         min-height: auto;
-        padding: 100px 0 50px;
     }
     
     .hero h1 {
         font-size: 1.8rem;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
     }
     
     .subtitle {
         font-size: 0.9rem;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
     
     .cta-buttons {
-        margin-top: 20px;
         flex-direction: row;
+        flex-wrap: wrap;
         gap: 10px;
     }
     
     .whatsapp-btn,
     .secondary-btn {
+        width: auto;
         padding: 10px 20px;
         font-size: 0.9rem;
-        width: auto;
     }
     
-    /* Ajuste especial para depoimentos em landscape */
+    /* Ajuste especial para carrossel em landscape */
+    .carrossel-inner {
+        gap: 10px;
+    }
+    
+    .pacote-card {
+        min-width: 200px !important;
+    }
+}
+
+/* Ajuste para telas baixas */
+@media (max-height: 600px) {
+    .hero {
+        padding: 120px 0 50px;
+        min-height: auto;
+    }
+    
     .testimonial-img {
         max-height: 200px;
     }
+}
+
+/* Garantir que os botões do WhatsApp sejam consistentes */
+.whatsapp-btn, .whatsapp-pacote-btn {
+    font-family: inherit;
+}
+
+/* Ajuste de espaçamento entre seções */
+section + section {
+    margin-top: 0;
+}
+
+/* Garantir que o carrossel não tenha overflow em telas grandes */
+@media (min-width: 769px) {
+    .carrossel-wrapper {
+        overflow: hidden;
+    }
+}
+/* ============================================= */
+/* CORREÇÕES ESPECÍFICAS PARA SEÇÃO DE PACOTES - URGENTE */
+/* ============================================= */
+
+@media (max-width: 768px) {
+    /* CORREÇÃO RADICAL PARA A SEÇÃO DE PACOTES */
+    .pacotes-desconto {
+        overflow: hidden;
+        padding: 40px 0 20px;
+        margin-top: 60px;
+    }
     
-    .testimonial-slide {
+    .pacotes-container {
+        gap: 25px;
+        width: 100%;
+        overflow: visible;
+    }
+    
+    /* FORÇAR REDES SOCIAIS A CABER NA TELA */
+    .rede-social-div {
+        width: 100%;
+        margin: 0;
+        padding: 20px 10px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        overflow: visible;
+    }
+    
+    /* REMOVER QUALQUER ESPAÇO EXTERNO */
+    .carrossel-wrapper {
+        margin: 0 -10px;
+        padding: 0 10px;
+        width: calc(100% + 20px);
+        overflow: visible;
+    }
+    
+    /* CARROSSEL MOBILE - SCROLL HORIZONTAL FUNCIONAL */
+    .carrossel-instagram-br,
+    .carrossel-instagram-mix,
+    .carrossel-tiktok-br,
+    .carrossel-tiktok-mix {
+        padding: 15px 0;
+        overflow: visible !important;
+        width: 100%;
+    }
+    
+    /* CONTAINER DO CARROSSEL - AGORA É SCROLLABLE */
+    .carrossel-inner {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        gap: 15px;
+        padding: 10px 15px 15px;
+        margin: 0;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none; /* Firefox */
+    }
+    
+    /* Esconder scrollbar no Chrome/Safari */
+    .carrossel-inner::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* CARDS COM LARGURA FIXA PARA SCROLL */
+    .pacote-card {
+        min-width: 200px !important;
+        max-width: 200px !important;
+        width: 200px !important;
+        padding: 18px 12px;
+        margin: 0;
+        flex-shrink: 0;
+        scroll-snap-align: start;
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    /* AJUSTES DE TEXTO NOS CARDS */
+    .pacote-quantidade {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+    
+    .pacote-label {
+        font-size: 0.75rem;
+        margin-bottom: 15px;
+        white-space: nowrap;
+    }
+    
+    .preco-riscado {
+        font-size: 0.85rem;
+    }
+    
+    .preco-novo {
+        font-size: 1.4rem;
+    }
+    
+    .pix-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .economia-badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+        margin-bottom: 5px;
+        white-space: nowrap;
+    }
+    
+    .whatsapp-pacote-btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    
+    /* REMOVER BOTÕES DE NAVEGAÇÃO NO MOBILE */
+    .carrossel-btn {
+        display: none !important;
+    }
+    
+    /* TÍTULOS RESPONSIVOS */
+    .rede-social-title {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        padding: 0 10px;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .carrossel-subtitle {
+        font-size: 1rem;
+        margin-bottom: 15px;
+        padding: 0 10px;
+        justify-content: center;
+    }
+    
+    /* DISCLAIMER RESPONSIVO */
+    .disclaimer-pacotes {
+        margin-top: 25px;
         padding: 15px;
+        font-size: 0.8rem;
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    
+    .disclaimer-pacotes p {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
+}
+
+/* CORREÇÃO ESPECIAL PARA MOBILE MUITO PEQUENO (iPhone SE, etc) */
+@media (max-width: 375px) {
+    .pacote-card {
+        min-width: 180px !important;
+        max-width: 180px !important;
+        width: 180px !important;
+        padding: 15px 10px;
+    }
+    
+    .pacote-quantidade {
+        font-size: 1.6rem;
+    }
+    
+    .preco-novo {
+        font-size: 1.3rem;
+    }
+    
+    .whatsapp-pacote-btn {
+        padding: 9px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .rede-social-title {
+        font-size: 1.3rem;
+    }
+}
+
+/* CORREÇÃO PARA IPHONE 5/SE - TELAS MUITO PEQUENAS */
+@media (max-width: 320px) {
+    .pacote-card {
+        min-width: 170px !important;
+        max-width: 170px !important;
+        width: 170px !important;
+        padding: 12px 8px;
+    }
+    
+    .pacote-quantidade {
+        font-size: 1.5rem;
+    }
+    
+    .preco-novo {
+        font-size: 1.2rem;
+    }
+    
+    .pix-icon {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .economia-badge {
+        font-size: 0.65rem;
+        padding: 3px 6px;
+    }
+}
+
+/* GARANTIR QUE NÃO HÁ OVERFLOW HORIZONTAL */
+@media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+    
+    .pacotes-desconto .container {
+        padding: 0;
+        max-width: 100%;
+    }
+    
+    /* REMOVER QUALQUER MARGEM/ESPAÇO DESNECESSÁRIO */
+    .pacotes-desconto h2,
+    .section-subtitle {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+/* CORREÇÃO PARA OS BADGES DE ECONOMIA */
+.economia-badge {
+    display: inline-block;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* GARANTIR QUE OS ELEMENTOS SE ENCAIXEM */
+.pacote-card * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* AJUSTE PARA OS ÍCONES DO PIX */
+.pacote-preco-atual {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+}
+
+/* ============================================= */
+/* FALLBACK PARA JS DESABILITADO */
+/* ============================================= */
+.no-js .carrossel-inner {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: visible;
+}
+
+.no-js .pacote-card {
+    min-width: 150px;
+    max-width: 180px;
+    margin: 5px;
+}
+
+/* ============================================= */
+/* MELHORIAS DE PERFORMANCE PARA MOBILE */
+/* ============================================= */
+@media (max-width: 768px) {
+    .pacote-card {
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    
+    .carrossel-inner {
+        will-change: scroll-position;
     }
 }
