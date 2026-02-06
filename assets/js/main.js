@@ -355,7 +355,7 @@ function initPacoteButtons() {
             const redeTexto = rede === 'instagram' ? 'Instagram' : 'TikTok';
             
             // Mensagem personalizada para WhatsApp
-            const mensagem = `Olá! Gostaria de testar o pacote de ${quantidade} seguidores ${tipoTexto} para o meu ${redeTexto}. Aguarde até que eu te envie as informações dos pacotes antes de começar`;
+            const mensagem = `Olá! Gostaria de testar o pacote de ${quantidade} seguidores ${tipoTexto} para o meu ${redeTexto}.`;
             
             // Codifica a mensagem para URL
             const mensagemCodificada = encodeURIComponent(mensagem);
