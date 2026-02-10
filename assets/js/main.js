@@ -1,1001 +1,218 @@
 // =============================================
-// SISTEMA DE CARROSSEL INFINITO - UpSeguidores
-// =============================================
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar todas as funcionalidades
-    initAllFunctions();
-});
-
-// =============================================
-// FUNÇÃO PRINCIPAL DE INICIALIZAÇÃO
-// =============================================
-
-function initAllFunctions() {
-    // 1. Carrossel infinito (PRIORIDADE) - Corrigido para mobile
-    initInfiniteCarousel();
-    
-    // 2. Menu mobile
-    initMobileMenu();
-    
-    // 3. Animações do comparativo
-    initComparativoAnimations();
-    
-    // 4. GTM e tracking
-    initGTMEvents();
-    
-    // 5. Botões dos pacotes
-    initPacoteButtons();
-    
-    // 6. FAQ accordion
-    initFAQ();
-    
-    // 7. Carrossel de depoimentos
-    initTestimonialsCarousel();
-    
-    // 8. Scroll suave
-    initSmoothScroll();
-    
-    // 9. Cálculo automático de desconto
-    initAutoDiscountCalculation();
-    
-    // 10. Ajustes responsivos
-    setupResponsiveAdjustments();
-    
-    // 11. Ajustar hero section
-    adjustHeroSection();
-}
-
-// =============================================
-// FUNÇÃO PARA AJUSTAR HERO SECTION
-// =============================================
-
-function adjustHeroSection() {
-    // Garantir que a hero não cubra outros elementos
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        // Ajustar margens baseado no header
-        const header = document.querySelector('header');
-        if (header) {
-            hero.style.marginTop = header.offsetHeight + 'px';
-        }
-        
-        // Otimizar para mobile
-        if (window.innerWidth <= 768) {
-            hero.style.minHeight = '320px';
-            hero.style.padding = '100px 0 40px';
-        }
-    }
-}
-
-// =============================================
-// 1. CARROSSEL INFINITO - FUNÇÃO PRINCIPAL
-// =============================================
-
-function initInfiniteCarousel() {
-    const carousels = document.querySelectorAll('.carrossel-inner');
-    
-    if (carousels.length === 0) {
-        return;
-    }
-    
-    carousels.forEach((carousel, index) => {
-        // Se já foi inicializado, pular
-        if (carousel.classList.contains('carrossel-initialized')) {
-            return;
-        }
-        
-        // Adicionar classe de controle
-        carousel.classList.add('carrossel-initialized');
-        
-        // Configurar para desktop ou mobile
-        if (window.innerWidth > 768) {
-            setupDesktopCarousel(carousel, index);
-        } else {
-            setupMobileCarousel(carousel, index);
-        }
-    });
-    
-    // Reconfigurar ao redimensionar
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            carousels.forEach((carousel, index) => {
-                carousel.classList.remove('carrossel-initialized');
-                carousel.classList.add('carrossel-initialized');
-                
-                if (window.innerWidth > 768) {
-                    setupDesktopCarousel(carousel, index);
-                } else {
-                    setupMobileCarousel(carousel, index);
-                }
-            });
-        }, 300);
-    });
-}
-
-// =============================================
-// 1.1 CARROSSEL PARA DESKTOP (AUTO-PLAY + INFINITO)
-// =============================================
-
-function setupDesktopCarousel(carousel, index) {
-    // Se for mobile, usar configuração mobile
-    if (window.innerWidth <= 768) {
-        setupMobileCarousel(carousel, index);
-        return;
-    }
-    
-    // Obter elementos
-    const wrapper = carousel.closest('.carrossel-wrapper');
-    const prevBtn = wrapper ? wrapper.querySelector('.carrossel-prev') : null;
-    const nextBtn = wrapper ? wrapper.querySelector('.carrossel-next') : null;
-    const cards = carousel.querySelectorAll('.pacote-card:not(.cloned-card):not(.mobile-infinite-clone)');
-    
-    if (cards.length === 0) {
-        return;
-    }
-    
-    // Variáveis de controle
-    let currentIndex = 0;
-    let isAnimating = false;
-    let autoPlayInterval;
-    const totalCards = cards.length;
-    const cardWidth = cards[0].offsetWidth + 25;
-    
-    // 1. CLONAR CARDS PARA EFEITO INFINITO
-    function cloneCardsForInfinite() {
-        if (carousel.hasAttribute('data-cloned')) {
-            // Remover clones antigos
-            const oldClones = carousel.querySelectorAll('.cloned-card');
-            oldClones.forEach(clone => clone.remove());
-        }
-        
-        // Clonar todos os cards e adicionar no final
-        const cardsToClone = Array.from(cards);
-        cardsToClone.forEach(card => {
-            const clone = card.cloneNode(true);
-            clone.classList.add('cloned-card');
-            clone.setAttribute('aria-hidden', 'true');
-            carousel.appendChild(clone);
-        });
-        
-        carousel.setAttribute('data-cloned', 'true');
-    }
-    
-    // Executar clonagem
-    cloneCardsForInfinite();
-    
-    // 2. FUNÇÃO PARA MOVER CARROSSEL
-    function moveCarousel(direction) {
-        if (isAnimating) return;
-        isAnimating = true;
-        
-        stopAutoPlay();
-        
-        if (direction === 'next') {
-            currentIndex++;
-            carousel.style.transition = 'transform 0.5s ease-in-out';
-            carousel.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-            
-            if (currentIndex >= totalCards) {
-                setTimeout(() => {
-                    carousel.style.transition = 'none';
-                    carousel.style.transform = 'translateX(0)';
-                    currentIndex = 0;
-                    
-                    setTimeout(() => {
-                        carousel.style.transition = 'transform 0.5s ease-in-out';
-                        isAnimating = false;
-                        startAutoPlay();
-                    }, 50);
-                }, 500);
-            } else {
-                setTimeout(() => {
-                    isAnimating = false;
-                    startAutoPlay();
-                }, 500);
-            }
-            
-        } else if (direction === 'prev') {
-            currentIndex--;
-            
-            if (currentIndex < 0) {
-                carousel.style.transition = 'none';
-                carousel.style.transform = `translateX(-${totalCards * cardWidth}px)`;
-                currentIndex = totalCards - 1;
-                
-                setTimeout(() => {
-                    carousel.style.transition = 'transform 0.5s ease-in-out';
-                    carousel.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-                    
-                    setTimeout(() => {
-                        isAnimating = false;
-                        startAutoPlay();
-                    }, 500);
-                }, 50);
-            } else {
-                carousel.style.transition = 'transform 0.5s ease-in-out';
-                carousel.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-                
-                setTimeout(() => {
-                    isAnimating = false;
-                    startAutoPlay();
-                }, 500);
-            }
-        }
-        
-        // GTM Event
-        if (window.dataLayer) {
-            window.dataLayer.push({
-                'event': 'carrossel_navigate',
-                'carrossel_index': index + 1,
-                'direction': direction,
-                'current_slide': currentIndex + 1
-            });
-        }
-    }
-    
-    // 3. AUTO-PLAY CONFIGURATION
-    function startAutoPlay() {
-        if (window.innerWidth > 768) {
-            autoPlayInterval = setInterval(() => {
-                moveCarousel('next');
-            }, 4000);
-        }
-    }
-    
-    function stopAutoPlay() {
-        if (autoPlayInterval) {
-            clearInterval(autoPlayInterval);
-            autoPlayInterval = null;
-        }
-    }
-    
-    // 4. EVENT LISTENERS
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => moveCarousel('prev'));
-    }
-    
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => moveCarousel('next'));
-    }
-    
-    carousel.addEventListener('mouseenter', stopAutoPlay);
-    carousel.addEventListener('mouseleave', startAutoPlay);
-    
-    carousel.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' && prevBtn) {
-            e.preventDefault();
-            moveCarousel('prev');
-        } else if (e.key === 'ArrowRight' && nextBtn) {
-            e.preventDefault();
-            moveCarousel('next');
-        }
-    });
-    
-    // 5. TOUCH SUPPORT (para tablets)
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    carousel.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        stopAutoPlay();
-    }, { passive: true });
-    
-    carousel.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].clientX;
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        
-        if (Math.abs(diff) > swipeThreshold) {
-            if (diff > 0) {
-                moveCarousel('next');
-            } else {
-                moveCarousel('prev');
-            }
-        } else {
-            setTimeout(startAutoPlay, 2000);
-        }
-    }, { passive: true });
-    
-    // 6. INICIAR AUTO-PLAY
-    startAutoPlay();
-    
-    // 7. Pausar quando a página não está visível
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            stopAutoPlay();
-        } else {
-            startAutoPlay();
-        }
-    });
-}
-
-// =============================================
-// 1.2 CARROSSEL PARA MOBILE (SCROLL HORIZONTAL INFINITO) - CORRIGIDO
-// =============================================
-
-function setupMobileCarousel(carousel, index) {
-    // Esconder botões de navegação no mobile
-    const wrapper = carousel.closest('.carrossel-wrapper');
-    const prevBtn = wrapper ? wrapper.querySelector('.carrossel-prev') : null;
-    const nextBtn = wrapper ? wrapper.querySelector('.carrossel-next') : null;
-    
-    if (prevBtn) prevBtn.style.display = 'none';
-    if (nextBtn) nextBtn.style.display = 'none';
-    
-    // Configurar scroll horizontal
-    carousel.style.overflowX = 'auto';
-    carousel.style.overflowY = 'hidden';
-    carousel.style.scrollSnapType = 'x mandatory';
-    carousel.style.cursor = 'grab';
-    carousel.style.WebkitOverflowScrolling = 'touch';
-    carousel.style.scrollBehavior = 'smooth';
-    carousel.style.touchAction = 'pan-y'; // Permitir scroll vertical
-    
-    // Remover transições no mobile
-    carousel.style.transition = 'none';
-    carousel.style.transform = 'none';
-    
-    // Obter cards originais (sem clones)
-    const originalCards = carousel.querySelectorAll('.pacote-card:not(.cloned-card):not(.mobile-infinite-clone)');
-    if (originalCards.length === 0) return;
-    
-    const cardWidth = originalCards[0].offsetWidth + 15;
-    const containerWidth = carousel.parentElement.offsetWidth;
-    const visibleCards = Math.floor(containerWidth / cardWidth);
-    
-    // 1. CLONAR CARDS PARA EFEITO INFINITO NO MOBILE
-    function cloneCardsForMobileInfinite() {
-        // Verificar se já tem clones mobile
-        if (carousel.hasAttribute('data-mobile-infinite')) {
-            // Remover clones antigos
-            const oldClones = carousel.querySelectorAll('.mobile-infinite-clone');
-            oldClones.forEach(clone => clone.remove());
-        }
-        
-        // Adicionar clones suficientes para criar efeito infinito
-        const cardsToClone = Array.from(originalCards);
-        
-        // Clonar para o final (para scroll infinito)
-        cardsToClone.forEach(card => {
-            const clone = card.cloneNode(true);
-            clone.classList.add('mobile-infinite-clone');
-            clone.setAttribute('aria-hidden', 'true');
-            clone.style.touchAction = 'pan-x'; // Apenas arraste horizontal nos cards
-            carousel.appendChild(clone);
-        });
-        
-        // Clonar para o início (para scroll reverso)
-        const firstFewCards = Array.from(originalCards).slice(0, visibleCards + 1);
-        firstFewCards.reverse().forEach(card => {
-            const clone = card.cloneNode(true);
-            clone.classList.add('mobile-infinite-clone');
-            clone.setAttribute('aria-hidden', 'true');
-            clone.style.touchAction = 'pan-x';
-            carousel.prepend(clone);
-        });
-        
-        // Rolar para a primeira posição original (depois dos clones do início)
-        setTimeout(() => {
-            const targetPosition = (visibleCards + 1) * cardWidth;
-            carousel.scrollLeft = targetPosition;
-        }, 100);
-        
-        carousel.setAttribute('data-mobile-infinite', 'true');
-    }
-    
-    // Executar clonagem
-    cloneCardsForMobileInfinite();
-    
-    // 2. SISTEMA DE ARRASTE MELHORADO - PERMITE SCROLL VERTICAL
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let scrollLeftStart = 0;
-    let isHorizontalDrag = false;
-    let lastScrollLeft = 0;
-    
-    // Função para determinar se é um arraste horizontal ou vertical
-    function startDrag(e) {
-        // Verificar se o toque foi em um card (para arraste horizontal)
-        const target = e.target.closest('.pacote-card, .mobile-infinite-clone');
-        if (!target && !carousel.contains(e.target)) return;
-        
-        isDragging = true;
-        carousel.classList.add('grabbing');
-        
-        // Capturar posições iniciais
-        startX = (e.type === 'mousedown') ? e.pageX : e.touches[0].pageX;
-        startY = (e.type === 'mousedown') ? e.pageY : e.touches[0].pageY;
-        scrollLeftStart = carousel.scrollLeft;
-        lastScrollLeft = scrollLeftStart;
-        
-        // Resetar flag de direção
-        isHorizontalDrag = false;
-        
-        // Não prevenir comportamento padrão - permite scroll vertical
-        if (e.type === 'mousedown') {
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', endDrag);
-        } else {
-            document.addEventListener('touchmove', drag, { passive: false });
-            document.addEventListener('touchend', endDrag);
-        }
-    }
-    
-    function drag(e) {
-        if (!isDragging) return;
-        
-        const currentX = (e.type === 'mousemove') ? e.pageX : e.touches[0].pageX;
-        const currentY = (e.type === 'mousemove') ? e.pageY : e.touches[0].pageY;
-        
-        // Calcular distâncias
-        const deltaX = Math.abs(currentX - startX);
-        const deltaY = Math.abs(currentY - startY);
-        
-        // Determinar direção apenas uma vez
-        if (!isHorizontalDrag && (deltaX > 10 || deltaY > 10)) {
-            isHorizontalDrag = deltaX > deltaY;
-            
-            // Se for arraste horizontal, prevenir scroll vertical
-            if (isHorizontalDrag) {
-                e.preventDefault();
-            }
-        }
-        
-        // Se for arraste horizontal, mover carrossel
-        if (isHorizontalDrag) {
-            const walk = (currentX - startX) * 1.5;
-            const newScrollLeft = scrollLeftStart - walk;
-            
-            // Limitar scroll para evitar extremos
-            if (newScrollLeft >= 0 && newScrollLeft <= carousel.scrollWidth - carousel.clientWidth) {
-                carousel.scrollLeft = newScrollLeft;
-                lastScrollLeft = newScrollLeft;
-            }
-        }
-        // Se for arraste vertical, permitir scroll normal da página
-    }
-    
-    function endDrag() {
-        if (!isDragging) return;
-        
-        isDragging = false;
-        carousel.classList.remove('grabbing');
-        
-        // Aplicar snap se foi um arraste horizontal curto
-        if (isHorizontalDrag) {
-            const cardIndex = Math.round(lastScrollLeft / cardWidth);
-            carousel.scrollTo({
-                left: cardIndex * cardWidth,
-                behavior: 'smooth'
-            });
-        }
-        
-        // Remover event listeners
-        document.removeEventListener('mousemove', drag);
-        document.removeEventListener('mouseup', endDrag);
-        document.removeEventListener('touchmove', drag);
-        document.removeEventListener('touchend', endDrag);
-    }
-    
-    // Adicionar event listeners apenas para arraste em cards
-    originalCards.forEach(card => {
-        card.addEventListener('mousedown', startDrag);
-        card.addEventListener('touchstart', startDrag, { passive: true });
-    });
-    
-    const mobileClones = carousel.querySelectorAll('.mobile-infinite-clone');
-    mobileClones.forEach(clone => {
-        clone.addEventListener('mousedown', startDrag);
-        clone.addEventListener('touchstart', startDrag, { passive: true });
-    });
-    
-    // 3. DETECTAR SCROLL PARA CRIAR EFEITO INFINITO (melhorado)
-    let isScrolling = false;
-    let scrollTimeout;
-    
-    carousel.addEventListener('scroll', () => {
-        if (isScrolling || isDragging) return;
-        
-        clearTimeout(scrollTimeout);
-        isScrolling = true;
-        
-        const scrollLeft = carousel.scrollLeft;
-        const scrollWidth = carousel.scrollWidth;
-        const clientWidth = carousel.clientWidth;
-        
-        // Suavizar a detecção de bordas
-        const finalThreshold = scrollWidth - (clientWidth * 0.8);
-        const startThreshold = clientWidth * 0.2;
-        
-        if (scrollLeft >= finalThreshold) {
-            // Próximo ao final - rolar suavemente para o meio
-            setTimeout(() => {
-                if (!isDragging) {
-                    carousel.scrollTo({
-                        left: (visibleCards + 2) * cardWidth,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 150);
-        } else if (scrollLeft <= startThreshold) {
-            // Próximo ao início - rolar suavemente para antes do final
-            setTimeout(() => {
-                if (!isDragging) {
-                    const targetScroll = scrollWidth - (visibleCards + 3) * cardWidth;
-                    carousel.scrollTo({
-                        left: targetScroll,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 150);
-        }
-        
-        scrollTimeout = setTimeout(() => {
-            isScrolling = false;
-        }, 100);
-    }, { passive: true });
-    
-    // 4. MELHORAR EXPERIÊNCIA DE TOQUE
-    // Permitir toque rápido para scroll
-    let lastTouchTime = 0;
-    carousel.addEventListener('touchstart', (e) => {
-        const currentTime = new Date().getTime();
-        const timeDiff = currentTime - lastTouchTime;
-        
-        // Se toque muito rápido, pode ser double-tap - ignorar
-        if (timeDiff < 300) {
-            e.preventDefault();
-        }
-        
-        lastTouchTime = currentTime;
-    }, { passive: true });
-    
-    // 5. INICIALIZAR COM POSIÇÃO CORRETA
-    setTimeout(() => {
-        if (!carousel.hasAttribute('data-initial-scroll')) {
-            const targetPosition = (visibleCards + 1) * cardWidth;
-            carousel.scrollLeft = targetPosition;
-            carousel.setAttribute('data-initial-scroll', 'true');
-        }
-    }, 200);
-    
-    // 6. AJUSTAR PARA DISPOSITIVOS COM CANETA OU STYLUS
-    carousel.addEventListener('pointerdown', (e) => {
-        if (e.pointerType === 'pen' || e.pointerType === 'touch') {
-            const target = e.target.closest('.pacote-card, .mobile-infinite-clone');
-            if (target) {
-                startDrag(e);
-            }
-        }
-    });
-    
-    // 7. RESETAR AO SAIR DA PÁGINA E VOLTAR
-    document.addEventListener('visibilitychange', function() {
-        if (!document.hidden && window.innerWidth <= 768) {
-            setTimeout(() => {
-                const expectedPosition = (visibleCards + 1) * cardWidth;
-                if (Math.abs(carousel.scrollLeft - expectedPosition) > cardWidth * 2) {
-                    carousel.scrollTo({
-                        left: expectedPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            }, 300);
-        }
-    });
-}
-
-// =============================================
-// 2. MENU MOBILE
-// =============================================
-
-function initMobileMenu() {
-    const mobileMenu = document.getElementById('mobile-menu');
-    const nav = document.getElementById('nav');
-    
-    if (!mobileMenu || !nav) return;
-    
-    mobileMenu.addEventListener('click', function() {
-        this.classList.toggle('active');
-        nav.classList.toggle('active');
-        
-        // Bloquear scroll quando menu está aberto
-        if (nav.classList.contains('active')) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    });
-    
-    // Fechar menu ao clicar em links
-    document.querySelectorAll('nav a').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-            nav.classList.remove('active');
-            document.body.style.overflow = '';
-        });
-    });
-    
-    // Fechar menu ao clicar fora
-    document.addEventListener('click', (e) => {
-        if (!nav.contains(e.target) && !mobileMenu.contains(e.target) && nav.classList.contains('active')) {
-            mobileMenu.classList.remove('active');
-            nav.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
-}
-
-// =============================================
-// 3. ANIMAÇÕES DO COMPARATIVO
-// =============================================
-
-function initComparativoAnimations() {
-    const comparativoSection = document.querySelector('.instagram-comparativo');
-    if (!comparativoSection) return;
-    
-    // Resetar valores iniciais
-    setInitialValues();
-    
-    // Configurar detectores de interação
-    let animationTriggered = false;
-    
-    // Função para iniciar animação
-    function startAnimation() {
-        if (animationTriggered) return;
-        animationTriggered = true;
-        
-        // Animar apenas os seguidores
-        animateCounter('seguidores-depois', 127, 5127, 2000);
-        
-        // Atualizar instrução
-        setTimeout(() => {
-            const instrucao = document.querySelector('.instrucao-animacao');
-            if (instrucao) {
-                instrucao.innerHTML = '<i class="fas fa-check-circle" style="color:#25D366"></i> <span>Transformação completa! +5.000 seguidores!</span>';
-                instrucao.style.color = '#25D366';
-                instrucao.style.fontWeight = '600';
-            }
-        }, 2200);
-    }
-    
-    // Detectar hover
-    comparativoSection.addEventListener('mouseenter', startAnimation);
-    
-    // Detectar toque (mobile)
-    comparativoSection.addEventListener('touchstart', startAnimation, { passive: true });
-    
-    // Detectar scroll
-    let scrollTriggered = false;
-    window.addEventListener('scroll', () => {
-        if (scrollTriggered || animationTriggered) return;
-        
-        const sectionTop = comparativoSection.offsetTop;
-        const sectionHeight = comparativoSection.offsetHeight;
-        const scrollPosition = window.scrollY + (window.innerHeight * 0.7);
-        
-        if (scrollPosition > sectionTop + (sectionHeight * 0.3)) {
-            startAnimation();
-            scrollTriggered = true;
-        }
-    });
-    
-    // Detectar se já está visível ao carregar
-    window.addEventListener('load', () => {
-        if (animationTriggered) return;
-        
-        const sectionTop = comparativoSection.offsetTop;
-        const scrollPosition = window.scrollY + (window.innerHeight * 0.8);
-        
-        if (scrollPosition > sectionTop + 100) {
-            setTimeout(startAnimation, 1000);
-        }
-    });
-}
-
-// =============================================
-// 3.1 FUNÇÕES AUXILIARES DO COMPARATIVO
-// =============================================
-
-function setInitialValues() {
-    const values = {
-        'seguidores-antes': 127,
-        'seguindo-antes': 145,
-        'posts-antes': 8,
-        'seguidores-depois': 127,
-        'seguindo-depois': 145,
-        'posts-depois': 8
-    };
-    
-    Object.keys(values).forEach(id => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = values[id];
-        }
-    });
-}
-
-function animateCounter(elementId, start, end, duration) {
-    const element = document.getElementById(elementId);
-    if (!element) return;
-    
-    const range = end - start;
-    const increment = end > start ? 1 : -1;
-    const stepTime = Math.abs(Math.floor(duration / range));
-    let current = start;
-    
-    // Efeito visual
-    element.style.color = '#25D366';
-    element.style.textShadow = '0 0 10px rgba(37, 211, 102, 0.5)';
-    element.style.transition = 'all 0.3s ease';
-    
-    const timer = setInterval(() => {
-        current += increment;
-        element.textContent = current.toLocaleString('pt-BR');
-        
-        if (current === end) {
-            clearInterval(timer);
-            element.style.textShadow = 'none';
-            
-            // GTM Event
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    'event': 'animation_complete',
-                    'element': elementId,
-                    'final_value': end
-                });
-            }
-        }
-    }, Math.max(1, stepTime));
-}
-
-// =============================================
-// 4. GTM E TRACKING
+// CONFIGURAÇÃO PARA GOOGLE TAG MANAGER
 // =============================================
 
 function initGTMEvents() {
-    if (typeof dataLayer === 'undefined') {
-        window.dataLayer = window.dataLayer || [];
-    }
+    // Seu GTM já está incluído no <head> do HTML (GTM-MMQ89T46)
+    //console.log('Google Tag Manager carregado: GTM-MMQ89T46');
     
-    // Evento de página carregada
-    window.dataLayer.push({
-        'event': 'page_view',
-        'page_title': document.title,
-        'page_location': window.location.href
-    });
+    // =============================================
+    // EVENTOS PARA DATALAYER (OPCIONAL - MAS RECOMENDADO)
+    // =============================================
     
-    // Eventos de clique no WhatsApp
-    document.querySelectorAll('a[href*="wa.me"], .whatsapp-pacote-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const buttonText = this.textContent.trim();
-            const isPacoteButton = this.classList.contains('whatsapp-pacote-btn');
-            
+    // 1. EVENTO DE CLIQUE NO WHATSAPP (conversão principal)
+    document.querySelectorAll('a[href*="wa.me"], .whatsapp-pacote-btn').forEach(link => {
+        link.addEventListener('click', function() {
+            // Envia evento customizado para o GTM
+            window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
                 'event': 'whatsapp_click',
-                'button_text': buttonText,
-                'button_type': isPacoteButton ? 'pacote' : 'cta',
-                'pacote_info': isPacoteButton ? this.getAttribute('data-quantidade') + ' ' + this.getAttribute('data-tipo') : null
+                'event_category': 'conversion',
+                'event_label': this.textContent.trim(),
+                'link_text': this.textContent.trim(),
+                'link_url': this.getAttribute('href') || 'button_click',
+                'click_timestamp': new Date().toISOString()
             });
+            
+           // console.log('📱 Clique no WhatsApp rastreado para GTM');
         });
     });
     
-    // Eventos de visualização de seção
+    // 2. EVENTO DE SCROLL EM SEÇÕES IMPORTANTES
+    const importantSections = ['pacotes', 'comparativo', 'processo', 'services', 'testimonials', 'faq'];
+    
     if ('IntersectionObserver' in window) {
-        const sections = document.querySelectorAll('section[id]');
-        const observer = new IntersectionObserver((entries) => {
+        const sectionObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    window.dataLayer.push({
-                        'event': 'section_view',
-                        'section_id': entry.target.id,
-                        'section_name': entry.target.querySelector('h2')?.textContent || entry.target.id
-                    });
+                    const sectionId = entry.target.id;
+                    if (importantSections.includes(sectionId)) {
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({
+                            'event': 'section_view',
+                            'section_id': sectionId,
+                            'section_name': entry.target.querySelector('h2')?.textContent || sectionId
+                        });
+                        
+                       // console.log(`👁️ Seção visualizada: ${sectionId}`);
+                    }
                 }
             });
         }, { threshold: 0.5 });
         
-        sections.forEach(section => observer.observe(section));
+        // Observa todas as seções
+        document.querySelectorAll('section[id]').forEach(section => {
+            sectionObserver.observe(section);
+        });
     }
-}
-
-// =============================================
-// 5. BOTÕES DOS PACOTES
-// =============================================
-
-function initPacoteButtons() {
+    
+    // 3. EVENTO DE INTERAÇÃO COM A ANIMAÇÃO
+    const comparativoSection = document.querySelector('.instagram-comparativo');
+    if (comparativoSection) {
+        // Este evento será acionado pela função startAnimationOnInteraction()
+    }
+    
+    // 4. EVENTO DE CLIQUE NOS PACOTES
     document.querySelectorAll('.whatsapp-pacote-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            
+        button.addEventListener('click', function() {
             const quantidade = this.getAttribute('data-quantidade');
             const tipo = this.getAttribute('data-tipo');
             const rede = this.getAttribute('data-rede');
             
-            // Textos formatados
-            const tipoTexto = tipo === 'brasileiros' ? 'brasileiros' : 'mistos';
-            const redeTexto = rede === 'instagram' ? 'Instagram' : 'TikTok';
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'pacote_click',
+                'event_category': 'purchase_intent',
+                'event_label': `${quantidade}_${tipo}_${rede}`,
+                'pacote_quantidade': quantidade,
+                'pacote_tipo': tipo,
+                'pacote_rede': rede,
+                'click_timestamp': new Date().toISOString()
+            });
             
-            // Mensagem para WhatsApp
-            const mensagem = `Olá! Gostaria de adquirir o pacote de ${quantidade} seguidores ${tipoTexto} para o meu ${redeTexto}.`;
-            const mensagemCodificada = encodeURIComponent(mensagem);
-            const whatsappURL = `https://wa.me/5581999388041?text=${mensagemCodificada}`;
-            
-            // Abrir WhatsApp
-            window.open(whatsappURL, '_blank');
-            
-            // GTM Event
-            if (window.dataLayer) {
+            //console.log(`📦 Pacote clicado: ${quantidade} ${tipo} para ${rede}`);
+        });
+    });
+    
+    // 5. EVENTO DE VIEW DOS CARROSSÉIS
+    const carrosselObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const carrosselId = entry.target.classList.contains('carrossel-inner') ? 
+                    entry.target.parentElement.classList[1] : 'unknown';
+                
+                window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({
-                    'event': 'pacote_selected',
-                    'pacote_quantidade': quantidade,
-                    'pacote_tipo': tipo,
-                    'pacote_rede': rede
+                    'event': 'carrossel_view',
+                    'carrossel_id': carrosselId
                 });
+                
+               // console.log(`🎡 Carrossel visualizado: ${carrosselId}`);
             }
         });
+    }, { threshold: 0.5 });
+    
+    // Observa os carrosséis
+    document.querySelectorAll('.carrossel-inner').forEach(carrossel => {
+        carrosselObserver.observe(carrossel);
     });
 }
 
 // =============================================
-// 6. FAQ ACCORDION
+// CARROSSÉIS DOS PACOTES
 // =============================================
 
-function initFAQ() {
-    const faqQuestions = document.querySelectorAll('.faq-question');
+function initPacoteCarrossels() {
+    // Configura todos os carrosséis
+    const carrossels = [
+        { id: 'instagram-br', container: '.carrossel-instagram-br .carrossel-inner' },
+        { id: 'instagram-mix', container: '.carrossel-instagram-mix .carrossel-inner' },
+        { id: 'tiktok-br', container: '.carrossel-tiktok-br .carrossel-inner' },
+        { id: 'tiktok-mix', container: '.carrossel-tiktok-mix .carrossel-inner' }
+    ];
     
-    faqQuestions.forEach(question => {
-        // Adicionar ícone se não existir
-        if (!question.querySelector('i')) {
-            const icon = document.createElement('i');
-            icon.className = 'fas fa-chevron-down';
-            question.appendChild(icon);
+    carrossels.forEach(carrossel => {
+        const container = document.querySelector(carrossel.container);
+        const prevBtn = document.querySelector(`.carrossel-prev[data-carrossel="${carrossel.id}"]`);
+        const nextBtn = document.querySelector(`.carrossel-next[data-carrossel="${carrossel.id}"]`);
+        
+        if (!container) return;
+        
+        const cards = container.querySelectorAll('.pacote-card');
+        if (cards.length === 0) return;
+        
+        let currentIndex = 0;
+        const cardWidth = cards[0].offsetWidth + 25; // Largura do card + gap
+        const visibleCards = Math.floor(container.parentElement.offsetWidth / cardWidth);
+        
+        function updateCarrossel() {
+            const translateX = -currentIndex * cardWidth;
+            container.style.transform = `translateX(${translateX}px)`;
+            
+            // Atualiza visibilidade dos botões
+            if (prevBtn) prevBtn.style.display = currentIndex === 0 ? 'none' : 'flex';
+            if (nextBtn) nextBtn.style.display = currentIndex >= cards.length - visibleCards ? 'none' : 'flex';
         }
         
-        question.addEventListener('click', function() {
-            const answer = this.nextElementSibling;
-            const isOpen = answer.classList.contains('open');
-            const icon = this.querySelector('i');
-            
-            // Fechar todas as outras
-            document.querySelectorAll('.faq-answer').forEach(ans => {
-                ans.classList.remove('open');
-            });
-            
-            document.querySelectorAll('.faq-question i').forEach(icn => {
-                icn.className = 'fas fa-chevron-down';
-            });
-            
-            // Abrir/fechar esta
-            if (!isOpen) {
-                answer.classList.add('open');
-                if (icon) {
-                    icon.className = 'fas fa-chevron-up';
-                }
-                
-                // GTM Event
-                if (window.dataLayer) {
+        // Botão próximo
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < cards.length - visibleCards) {
+                    currentIndex++;
+                    updateCarrossel();
+                    
+                    // EVENTO PARA GTM - NAVEGAÇÃO NO CARROSSEL
+                    window.dataLayer = window.dataLayer || [];
                     window.dataLayer.push({
-                        'event': 'faq_open',
-                        'faq_question': this.textContent.replace(/[▼▲+-]/g, '').trim()
+                        'event': 'carrossel_navigate',
+                        'carrossel_id': carrossel.id,
+                        'direction': 'next',
+                        'current_slide': currentIndex + 1
                     });
                 }
-            }
-        });
-    });
-}
-
-// =============================================
-// 7. CARROSSEL DE DEPOIMENTOS
-// =============================================
-
-function initTestimonialsCarousel() {
-    const carousel = document.querySelector('.testimonial-inner');
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const prevBtn = document.querySelector('.carousel-btn.prev');
-    const nextBtn = document.querySelector('.carousel-btn.next');
-    
-    if (!carousel || slides.length === 0) return;
-    
-    let currentIndex = 0;
-    let autoPlayInterval;
-    
-    function updateCarousel() {
-        carousel.style.transform = `translateX(-${currentIndex * 100}%)`;
-    }
-    
-    function nextSlide() {
-        currentIndex = (currentIndex + 1) % slides.length;
-        updateCarousel();
-    }
-    
-    function prevSlide() {
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        updateCarousel();
-    }
-    
-    function startAutoPlay() {
-        autoPlayInterval = setInterval(nextSlide, 5000);
-    }
-    
-    function stopAutoPlay() {
-        clearInterval(autoPlayInterval);
-    }
-    
-    // Event listeners
-    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-    
-    // Pausar no hover
-    carousel.addEventListener('mouseenter', stopAutoPlay);
-    carousel.addEventListener('mouseleave', startAutoPlay);
-    
-    // Iniciar auto-play
-    startAutoPlay();
-}
-
-// =============================================
-// 8. SCROLL SUAVE
-// =============================================
-
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href === '#') return;
-            
-            const target = document.querySelector(href);
-            if (target) {
-                e.preventDefault();
-                
-                const headerHeight = document.querySelector('header').offsetHeight;
-                const targetPosition = target.offsetTop - headerHeight;
-                
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-                
-                // Fechar menu mobile se aberto
-                const mobileMenu = document.getElementById('mobile-menu');
-                const nav = document.getElementById('nav');
-                if (mobileMenu && nav && nav.classList.contains('active')) {
-                    mobileMenu.classList.remove('active');
-                    nav.classList.remove('active');
-                    document.body.style.overflow = '';
+            });
+        }
+        
+        // Botão anterior
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarrossel();
+                    
+                    // EVENTO PARA GTM - NAVEGAÇÃO NO CARROSSEL
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'carrossel_navigate',
+                        'carrossel_id': carrossel.id,
+                        'direction': 'prev',
+                        'current_slide': currentIndex + 1
+                    });
                 }
-            }
-        });
-    });
-}
+            });
+        }
 
-// =============================================
-// 9. CÁLCULO AUTOMÁTICO DE DESCONTO
+        // =============================================
+// CÁLCULO AUTOMÁTICO DE DESCONTO
 // =============================================
 
 function initAutoDiscountCalculation() {
-    // Preços base por pacote
+    // Preços originais por pacote (estes são os preços "normais" sem desconto)
     const precoBase = {
-        'instagram-brasileiros-500': 45.90,
+        // Instagram - Brasileiros
+        'instagram-brasileiros-500': 39.90,
         'instagram-brasileiros-2000': 189.90,
         'instagram-brasileiros-5000': 299.90,
-        'instagram-mistos-500': 40.90,
+        
+        // Instagram - Mistos
+        'instagram-mistos-500': 34.90,
         'instagram-mistos-2000': 143.90,
-        'instagram-mistos-5000': 219.90,
-        'tiktok-brasileiros-500': 45.90,
+        'instagram-mistos-5000': 189.90,
+        
+        // TikTok - Brasileiros
+        'tiktok-brasileiros-500': 39.90,
         'tiktok-brasileiros-2000': 189.90,
         'tiktok-brasileiros-5000': 299.90,
-        'tiktok-mistos-500': 40.90,
+        
+        // TikTok - Mistos
+        'tiktok-mistos-500': 34.90,
         'tiktok-mistos-2000': 143.90,
-        'tiktok-mistos-5000': 219.90
+        'tiktok-mistos-5000': 189.90
     };
     
+    // Calcula e atualiza todos os descontos
     function calculateAllDiscounts() {
-        document.querySelectorAll('.pacote-card:not(.cloned-card):not(.mobile-infinite-clone):not(.mobile-clone)').forEach(card => {
+        document.querySelectorAll('.pacote-card').forEach(card => {
             const quantidade = card.getAttribute('data-quantidade');
             const tipo = card.getAttribute('data-tipo');
             const rede = card.getAttribute('data-rede');
@@ -1009,17 +226,17 @@ function initAutoDiscountCalculation() {
                     const precoNovoTexto = precoNovoElement.textContent.replace('R$ ', '').replace(',', '.');
                     const precoNovoValue = parseFloat(precoNovoTexto);
                     
-                    if (!isNaN(precoNovoValue) && precoBaseValue > precoNovoValue) {
-                        // Calcular desconto
+                    if (!isNaN(precoNovoValue)) {
+                        // Calcula a porcentagem de desconto
                         const desconto = ((precoBaseValue - precoNovoValue) / precoBaseValue) * 100;
                         const descontoArredondado = Math.round(desconto);
                         
-                        // Atualizar badge
+                        // Atualiza o badge de economia
                         const economiaBadge = card.querySelector('.economia-badge');
                         if (economiaBadge) {
                             economiaBadge.textContent = `Economize ${descontoArredondado}%`;
                             
-                            // Adicionar classe baseada no desconto
+                            // Adiciona classe baseada no nível de desconto
                             economiaBadge.classList.remove('low-discount', 'medium-discount', 'high-discount');
                             
                             if (descontoArredondado < 15) {
@@ -1031,9 +248,9 @@ function initAutoDiscountCalculation() {
                             }
                         }
                         
-                        // Atualizar preço riscado
+                        // Atualiza o preço riscado se não existir
                         const precoRiscado = card.querySelector('.preco-riscado');
-                        if (precoRiscado) {
+                        if (precoRiscado && !precoRiscado.textContent.includes('R$')) {
                             precoRiscado.textContent = `R$ ${precoBaseValue.toFixed(2).replace('.', ',')}`;
                         }
                     }
@@ -1042,40 +259,826 @@ function initAutoDiscountCalculation() {
         });
     }
     
-    // Calcular inicialmente e ao redimensionar
+    // Inicializa o cálculo
     calculateAllDiscounts();
-    window.addEventListener('resize', calculateAllDiscounts);
+    
+    // Observa mudanças nos preços (se você tiver uma interface de admin)
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                setTimeout(calculateAllDiscounts, 100);
+            }
+        });
+    });
+    
+    // Observa mudanças nos preços
+    document.querySelectorAll('.preco-novo').forEach(element => {
+        observer.observe(element, { 
+            childList: true, 
+            characterData: true,
+            subtree: true 
+        });
+    });
+}
+        
+        // Navegação por teclado
+        container.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (prevBtn) prevBtn.click();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (nextBtn) nextBtn.click();
+            }
+        });
+        
+        // Navegação por touch/swipe para mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        container.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        container.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0 && nextBtn) {
+                    nextBtn.click();
+                } else if (diff < 0 && prevBtn) {
+                    prevBtn.click();
+                }
+            }
+        }
+        
+        // Ajusta na redimensionamento
+        window.addEventListener('resize', () => {
+            setTimeout(updateCarrossel, 100);
+        });
+        
+        // Inicializa
+        updateCarrossel();
+    });
+    
+    // EVENTO PARA GTM - CARROSSÉIS INICIALIZADOS
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'carrossels_initialized',
+        'total_carrossels': carrossels.length
+    });
 }
 
 // =============================================
-// 10. AJUSTES RESPONSIVOS
+// FUNCIONALIDADE DOS BOTÕES DE PACOTES
 // =============================================
 
-function setupResponsiveAdjustments() {
-    // Ajustar alturas do carrossel de depoimentos
-    function adjustTestimonialHeights() {
-        const testimonialSlides = document.querySelectorAll('.testimonial-slide');
-        if (testimonialSlides.length === 0) return;
+function initPacoteButtons() {
+    document.querySelectorAll('.whatsapp-pacote-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const quantidade = this.getAttribute('data-quantidade');
+            const tipo = this.getAttribute('data-tipo');
+            const rede = this.getAttribute('data-rede');
+            
+            // Determina o texto do tipo (brasileiros ou mistos)
+            const tipoTexto = tipo === 'brasileiros' ? 'brasileiros' : 'mistos';
+            
+            // Texto da rede social
+            const redeTexto = rede === 'instagram' ? 'Instagram' : 'TikTok';
+            
+            // Mensagem personalizada para WhatsApp
+            const mensagem = `Olá! Gostaria de adquirir o pacote de ${quantidade} seguidores ${tipoTexto} para o meu ${redeTexto}.`;
+            
+            // Codifica a mensagem para URL
+            const mensagemCodificada = encodeURIComponent(mensagem);
+            
+            // URL do WhatsApp
+            const whatsappURL = `https://wa.me/5581999388041?text=${mensagemCodificada}`;
+            
+            // Abre em nova aba
+            window.open(whatsappURL, '_blank');
+            
+            // EVENTO PARA GTM - PACOTE SELECIONADO
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'pacote_selected',
+                'event_category': 'conversion',
+                'event_label': `${quantidade}_${tipo}_${rede}`,
+                'pacote_quantidade': quantidade,
+                'pacote_tipo': tipo,
+                'pacote_rede': rede,
+                'pacote_valor': this.closest('.pacote-card').querySelector('.preco-novo')?.textContent || 'unknown'
+            });
+            
+            //console.log(`🛒 Pacote selecionado: ${quantidade} seguidores ${tipoTexto} para ${redeTexto}`);
+        });
+    });
+}
+
+// =============================================
+// VARIÁVEIS GLOBAIS
+// =============================================
+
+let animationActive = false;
+let animationCompleted = false;
+
+// =============================================
+// ANIMAÇÃO DE CRESCIMENTO SUPER RÁPIDO
+// =============================================
+
+function animateCounterFast(elementId, start, end) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const duration = 600;
+    const range = end - start;
+    const increment = range > 0 ? 1 : -1;
+    const stepTime = Math.abs(Math.floor(duration / range));
+    let current = start;
+    
+    // Efeito visual durante a animação
+    element.style.transform = 'scale(1.1)';
+    element.style.textShadow = '0 0 10px rgba(37, 211, 102, 0.5)';
+    element.style.color = '#25D366';
+    element.style.transition = 'color 0.3s ease';
+    
+    const timer = setInterval(() => {
+        current += increment;
+        element.textContent = current.toLocaleString();
         
-        let maxHeight = 0;
-        testimonialSlides.forEach(slide => {
-            slide.style.minHeight = 'auto';
-            const height = slide.offsetHeight;
-            if (height > maxHeight) maxHeight = height;
+        // Adiciona efeito de "pulso" a cada 100 seguidores
+        if (current % 100 === 0) {
+            element.style.transform = 'scale(1.15)';
+            setTimeout(() => {
+                element.style.transform = 'scale(1.1)';
+            }, 50);
+        }
+        
+        if (current === end) {
+            clearInterval(timer);
+            // Efeito final
+            element.style.transform = 'scale(1)';
+            element.style.textShadow = 'none';
+            
+            // EVENTO PARA GTM - ANIMAÇÃO COMPLETA
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'animation_complete',
+                'animation_type': 'counter_growth',
+                'final_value': end,
+                'growth_percentage': Math.round(((end - start) / start) * 100)
+            });
+            
+            // Adiciona efeito de confete após conclusão
+            if (elementId === 'seguidores-depois') {
+                createConfettiEffect();
+            }
+        }
+    }, Math.max(1, stepTime));
+}
+
+// =============================================
+// EFEITO DE CONFETI
+// =============================================
+
+function createConfettiEffect() {
+    const confettiContainer = document.querySelector('.perfil-depois');
+    if (!confettiContainer) return;
+    
+    const colors = ['#25D366', '#d42a7f', '#8a3ab9', '#FF9800', '#4CAF50'];
+    
+    for (let i = 0; i < 20; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'absolute';
+        confetti.style.width = '8px';
+        confetti.style.height = '8px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = '50%';
+        confetti.style.top = '50%';
+        confetti.style.left = '50%';
+        confetti.style.zIndex = '100';
+        confetti.style.opacity = '0.8';
+        confetti.style.pointerEvents = 'none';
+        
+        confettiContainer.appendChild(confetti);
+        
+        // Animação do confeti
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 2 + Math.random() * 3;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        let posX = 0;
+        let posY = 0;
+        let opacity = 0.8;
+        
+        const animateConfetti = () => {
+            posX += vx;
+            posY += vy;
+            opacity -= 0.02;
+            
+            confetti.style.transform = `translate(${posX * 10}px, ${posY * 10}px)`;
+            confetti.style.opacity = opacity;
+            
+            if (opacity > 0) {
+                requestAnimationFrame(animateConfetti);
+            } else {
+                confetti.remove();
+            }
+        };
+        
+        requestAnimationFrame(animateConfetti);
+    }
+}
+
+// =============================================
+// INICIA ANIMAÇÃO QUANDO O USUÁRIO INTERAGE
+// =============================================
+
+function startAnimationOnInteraction() {
+    if (animationCompleted) return;
+    
+    // Verifica se a animação já está ativa
+    if (animationActive) return;
+    animationActive = true;
+    
+    // EVENTO PARA GTM - ANIMAÇÃO INICIADA
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'animation_start',
+        'animation_type': 'counter_growth',
+        'interaction_type': 'user_triggered'
+    });
+    
+    // VALORES FINAIS - APENAS SEGUIDORES AUMENTAM
+    const seguidoresDepois = 5127;
+    const seguindoDepois = 145;
+    const postsDepois = 8;
+    
+    // Inicia APENAS a animação dos seguidores
+    animateCounterFast('seguidores-depois', 127, seguidoresDepois);
+    
+    // Mantém os outros valores estáticos
+    const seguindoElement = document.getElementById('seguindo-depois');
+    const postsElement = document.getElementById('posts-depois');
+    
+    if (seguindoElement) seguindoElement.textContent = seguindoDepois.toLocaleString();
+    if (postsElement) postsElement.textContent = postsDepois.toLocaleString();
+    
+    // Marca como completada
+    animationCompleted = true;
+    
+    // Mostra mensagem de sucesso
+    setTimeout(() => {
+        const instrucao = document.querySelector('.instrucao-animacao');
+        if (instrucao) {
+            instrucao.innerHTML = '<i class="fas fa-check-circle" style="color:#25D366"></i> <span>Transformação completa! +5.000 seguidores!</span>';
+            instrucao.style.color = '#25D366';
+            instrucao.style.fontWeight = '600';
+        }
+    }, 800);
+}
+
+// =============================================
+// DETECTOR DE HOVER E SCROLL
+// =============================================
+
+function setupInteractionDetectors() {
+    const comparativoSection = document.querySelector('.instagram-comparativo');
+    if (!comparativoSection) return;
+    
+    // Detecta hover na seção
+    comparativoSection.addEventListener('mouseenter', startAnimationOnInteraction);
+    
+    // Detecta toque em dispositivos móveis
+    comparativoSection.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        startAnimationOnInteraction();
+    }, { passive: false });
+    
+    // Detecta scroll até a seção
+    let scrollTriggered = false;
+    window.addEventListener('scroll', () => {
+        if (scrollTriggered || animationCompleted) return;
+        
+        const sectionTop = comparativoSection.offsetTop;
+        const sectionHeight = comparativoSection.offsetHeight;
+        const scrollPosition = window.scrollY + (window.innerHeight * 0.8); // 80% da janela
+        
+        // Dispara quando 80% da seção está visível
+        if (scrollPosition > sectionTop + (sectionHeight * 0.2)) {
+            startAnimationOnInteraction();
+            scrollTriggered = true;
+            
+            // EVENTO PARA GTM - SEÇÃO VISUALIZADA VIA SCROLL
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'section_scroll_trigger',
+                'section_id': 'comparativo'
+            });
+        }
+    });
+    
+    // Também dispara ao carregar se a seção já estiver visível
+    window.addEventListener('load', () => {
+        if (animationCompleted) return;
+        
+        const sectionTop = comparativoSection.offsetTop;
+        const scrollPosition = window.scrollY + (window.innerHeight * 0.8);
+        
+        if (scrollPosition > sectionTop + 100) {
+            setTimeout(startAnimationOnInteraction, 1000);
+        }
+    });
+}
+
+// =============================================
+// MENU HAMBURGUER
+// =============================================
+
+function initMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const nav = document.getElementById('nav');
+    
+    if (!mobileMenu || !nav) return;
+    
+    mobileMenu.addEventListener('click', function () {
+        this.classList.toggle('active');
+        nav.classList.toggle('active');
+        
+        // EVENTO PARA GTM - MENU ABERTO/FECHADO
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'menu_toggle',
+            'menu_state': nav.classList.contains('active') ? 'open' : 'closed'
         });
         
-        testimonialSlides.forEach(slide => {
-            slide.style.minHeight = (maxHeight + 20) + 'px';
+        // Previne scroll quando o menu está aberto
+        if (nav.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // Fechar menu ao clicar em um link
+    const navLinks = document.querySelectorAll('nav ul li a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function () {
+            mobileMenu.classList.remove('active');
+            nav.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+    });
+    
+    // Fechar menu ao clicar fora
+    document.addEventListener('click', function(event) {
+        const isClickInsideNav = nav.contains(event.target);
+        const isClickOnMenuToggle = mobileMenu.contains(event.target);
+        
+        if (!isClickInsideNav && !isClickOnMenuToggle && nav.classList.contains('active')) {
+            mobileMenu.classList.remove('active');
+            nav.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+}
+
+// =============================================
+// CARROSSEL DE DEPOIMENTOS
+// =============================================
+
+function initTestimonialCarousel() {
+    const testimonialInner = document.querySelector('.testimonial-inner');
+    const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+    const prevBtn = document.querySelector('.carousel-btn.prev');
+    const nextBtn = document.querySelector('.carousel-btn.next');
+    
+    if (!testimonialInner || testimonialSlides.length === 0) return;
+    
+    let currentIndex = 0;
+    let autoRotateInterval;
+    
+    function updateCarousel() {
+        testimonialInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+        
+        // EVENTO PARA GTM - SLIDE ALTERADO
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'carousel_slide_change',
+            'carousel_name': 'testimonials',
+            'current_slide': currentIndex + 1,
+            'total_slides': testimonialSlides.length
         });
     }
     
-    // Ajustar quando as imagens carregarem
-    window.addEventListener('load', adjustTestimonialHeights);
+    function startAutoRotate() {
+        autoRotateInterval = setInterval(function () {
+            currentIndex = (currentIndex + 1) % testimonialSlides.length;
+            updateCarousel();
+        }, 5000);
+    }
     
-    // Ajustar ao redimensionar
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(adjustTestimonialHeights, 250);
+    function stopAutoRotate() {
+        clearInterval(autoRotateInterval);
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function () {
+            currentIndex = (currentIndex + 1) % testimonialSlides.length;
+            updateCarousel();
+            stopAutoRotate();
+            setTimeout(startAutoRotate, 10000); // Retoma após 10 segundos
+        });
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function () {
+            currentIndex = (currentIndex - 1 + testimonialSlides.length) % testimonialSlides.length;
+            updateCarousel();
+            stopAutoRotate();
+            setTimeout(startAutoRotate, 10000); // Retoma após 10 segundos
+        });
+    }
+    
+    // Pausa no hover
+    testimonialInner.addEventListener('mouseenter', stopAutoRotate);
+    
+    // Retoma quando sai do hover
+    testimonialInner.addEventListener('mouseleave', startAutoRotate);
+    
+    // Inicia auto-rotate
+    startAutoRotate();
+}
+
+// =============================================
+// FAQ - ACCORDION
+// =============================================
+
+function initFAQAccordion() {
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    
+    faqQuestions.forEach(question => {
+        // Adiciona ícone se não existir
+        if (!question.querySelector('i')) {
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-chevron-down';
+            question.appendChild(icon);
+        }
+        
+        question.addEventListener('click', function () {
+            const answer = this.nextElementSibling;
+            const isOpen = answer.classList.contains('open');
+            const icon = this.querySelector('i');
+            
+            // EVENTO PARA GTM - FAQ ABERTO
+            if (!isOpen) {
+                const faqTitle = this.textContent.replace('▼', '').replace('▲', '').replace('+', '').replace('-', '').trim();
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'faq_open',
+                    'faq_question': faqTitle
+                });
+            }
+            
+            // Fecha todas as respostas
+            document.querySelectorAll('.faq-answer').forEach(item => {
+                item.classList.remove('open');
+            });
+            
+            document.querySelectorAll('.faq-question i').forEach(itemIcon => {
+                itemIcon.className = 'fas fa-chevron-down';
+                itemIcon.style.transform = 'rotate(0deg)';
+            });
+            
+            // Abre a resposta clicada se não estava aberta
+            if (!isOpen) {
+                answer.classList.add('open');
+                if (icon) {
+                    icon.className = 'fas fa-chevron-up';
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            }
+        });
+        
+        // Suporte a teclado
+        question.setAttribute('tabindex', '0');
+        question.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
     });
 }
+
+// =============================================
+// SCROLL SUAVE PARA ÂNCORAS
+// =============================================
+
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href === '#' || href === '#!') return;
+            
+            const targetElement = document.querySelector(href);
+            if (targetElement) {
+                e.preventDefault();
+                
+                // EVENTO PARA GTM - NAVEGAÇÃO INTERNA
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'internal_link_click',
+                    'link_text': this.textContent.trim(),
+                    'link_target': href
+                });
+                
+                const headerHeight = document.querySelector('header').offsetHeight;
+                const targetPosition = targetElement.offsetTop - headerHeight;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // Fecha menu mobile se estiver aberto
+                const mobileMenu = document.getElementById('mobile-menu');
+                const nav = document.getElementById('nav');
+                if (mobileMenu && nav && nav.classList.contains('active')) {
+                    mobileMenu.classList.remove('active');
+                    nav.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+    });
+}
+
+// =============================================
+// AJUSTE DE ALTURAS DO CARROSSEL
+// =============================================
+
+function adjustCarouselHeights() {
+    const testimonialSlides = document.querySelectorAll('.testimonial-slide');
+    if (testimonialSlides.length === 0) return;
+    
+    // Reset alturas
+    testimonialSlides.forEach(slide => {
+        slide.style.minHeight = 'auto';
+    });
+    
+    // Aguarda o próximo frame para calcular alturas corretas
+    setTimeout(() => {
+        let maxHeight = 0;
+        
+        testimonialSlides.forEach(slide => {
+            const slideHeight = slide.offsetHeight;
+            if (slideHeight > maxHeight) {
+                maxHeight = slideHeight;
+            }
+        });
+        
+        // Aplica altura mínima baseada no maior slide
+        testimonialSlides.forEach(slide => {
+            slide.style.minHeight = (maxHeight + 20) + 'px';
+        });
+        
+        // Ajusta a altura do container interno
+        const testimonialInner = document.querySelector('.testimonial-inner');
+        if (testimonialInner) {
+            testimonialInner.style.height = (maxHeight + 40) + 'px';
+        }
+    }, 100);
+}
+
+// =============================================
+// CARREGAMENTO DE IMAGENS DO CARROSSEL
+// =============================================
+
+function initImageLoading() {
+    // Ajusta as alturas quando as imagens carregarem
+    window.addEventListener('load', function() {
+        const images = document.querySelectorAll('.testimonial-img');
+        if (images.length === 0) return;
+        
+        let imagesLoaded = 0;
+        const totalImages = images.length;
+        
+        function checkAllImagesLoaded() {
+            imagesLoaded++;
+            if (imagesLoaded === totalImages) {
+                setTimeout(adjustCarouselHeights, 100);
+            }
+        }
+        
+        images.forEach(img => {
+            if (img.complete) {
+                checkAllImagesLoaded();
+            } else {
+                img.addEventListener('load', checkAllImagesLoaded);
+                img.addEventListener('error', checkAllImagesLoaded);
+            }
+        });
+        
+        // Fallback se todas as imagens já estiverem carregadas
+        if (imagesLoaded === totalImages) {
+            setTimeout(adjustCarouselHeights, 100);
+        }
+    });
+    
+    // Ajusta quando a janela for redimensionada
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(adjustCarouselHeights, 250);
+    });
+}
+
+// =============================================
+// TRACKING DE TEMPO NA PÁGINA
+// =============================================
+
+function initTimeTracking() {
+    let timeOnPage = 0;
+    let maxTrackTime = 300; // 5 minutos máximo
+    
+    const timeInterval = setInterval(() => {
+        timeOnPage++;
+        
+        // A cada 30 segundos, envia um evento
+        if (timeOnPage % 30 === 0 && timeOnPage <= maxTrackTime) {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'time_on_page',
+                'time_seconds': timeOnPage,
+                'time_minutes': Math.round(timeOnPage / 60 * 10) / 10
+            });
+        }
+        
+        // EVENTOS ESPECIAIS EM MARCOS
+        const milestones = [10, 30, 60, 120, 180, 300];
+        if (milestones.includes(timeOnPage)) {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': `${timeOnPage}s_on_page`
+            });
+        }
+        
+        // Para de contar após o tempo máximo
+        if (timeOnPage >= maxTrackTime) {
+            clearInterval(timeInterval);
+        }
+    }, 1000);
+}
+
+// =============================================
+// VALORES INICIAIS PARA A ANIMAÇÃO
+// =============================================
+
+function setInitialValues() {
+    // Define valores iniciais para a animação
+    const seguidoresAntes = document.getElementById('seguidores-antes');
+    const seguindoAntes = document.getElementById('seguindo-antes');
+    const postsAntes = document.getElementById('posts-antes');
+    const seguidoresDepois = document.getElementById('seguidores-depois');
+    const seguindoDepois = document.getElementById('seguindo-depois');
+    const postsDepois = document.getElementById('posts-depois');
+    
+    if (seguidoresAntes) seguidoresAntes.textContent = '127';
+    if (seguindoAntes) seguindoAntes.textContent = '145';
+    if (postsAntes) postsAntes.textContent = '8';
+    if (seguidoresDepois) seguidoresDepois.textContent = '127';
+    if (seguindoDepois) seguindoDepois.textContent = '145';
+    if (postsDepois) postsDepois.textContent = '8';
+}
+
+// =============================================
+// LAZY LOADING PARA IMAGENS
+// =============================================
+
+function initLazyLoading() {
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.getAttribute('data-src');
+                    
+                    if (src) {
+                        img.src = src;
+                        img.removeAttribute('data-src');
+                    }
+                    
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+}
+
+// =============================================
+// VALIDAÇÃO DE FORMULÁRIOS (se houver no futuro)
+// =============================================
+
+function initFormValidation() {
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            // Aqui você pode adicionar validações futuras
+            // Por enquanto, apenas envia o evento para GTM
+            
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'form_submit',
+                'form_id': this.id || 'unnamed_form',
+                'form_action': this.action
+            });
+        });
+    });
+}
+
+// =============================================
+// ERROR TRACKING
+// =============================================
+
+window.addEventListener('error', function(e) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'js_error',
+        'error_message': e.message,
+        'error_url': e.filename,
+        'error_line': e.lineno,
+        'error_column': e.colno
+    });
+    
+    //console.error('❌ JavaScript Error:', e.message);
+});
+
+// =============================================
+// INICIALIZAÇÃO GERAL DO SITE
+// =============================================
+
+document.addEventListener('DOMContentLoaded', function () {
+    //console.log('🚀 UpSeguidores - Site carregado com sucesso!');
+    //console.log('📊 Google Tag Manager: GTM-MMQ89T46');
+    //console.log('🛒 Carrosséis de pacotes inicializados');
+    
+    // Inicializa todas as funcionalidades
+    setInitialValues();
+    initGTMEvents(); // Configura eventos para GTM
+    initPacoteCarrossels(); // Novos carrosséis de pacotes
+    initPacoteButtons(); // Botões dos pacotes
+    initAutoDiscountCalculation(); 
+    initMobileMenu();
+    setupInteractionDetectors();
+    initTestimonialCarousel();
+    initFAQAccordion();
+    initSmoothScroll();
+    initImageLoading();
+    initTimeTracking();
+    initLazyLoading();
+    initFormValidation();
+    
+    // Ajuste inicial do carrossel
+    setTimeout(adjustCarouselHeights, 500);
+    
+    // EVENTO PARA GTM - PÁGINA CARREGADA
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'page_loaded',
+        'page_title': document.title,
+        'page_url': window.location.href,
+        'user_agent': navigator.userAgent,
+        'viewport_width': window.innerWidth,
+        'viewport_height': window.innerHeight
+    });
+});
+
+// =============================================
+// MENSAGEM DE BOAS-VINDAS NO CONSOLE
+// =============================================
+/*
+console.log(`
+╔═══════════════════════════════════════════╗
+║     🚀 UPSEGUIDORES - SISTEMA ATIVO      ║
+╠═══════════════════════════════════════════╣
+║ 📊 Google Tag Manager: GTM-MMQ89T46      ║
+║ 🛒 Carrosséis de pacotes: PRONTO         ║
+║ 📱 Botões WhatsApp: CONFIGURADOS         ║
+║ 🎯 Tracking de eventos: ATIVADO          ║
+║ 📈 Animações: DISPONÍVEIS                ║
+╚═══════════════════════════════════════════╝
+`);
+*/

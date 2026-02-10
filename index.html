@@ -1063,13 +1063,53 @@
 
     <!-- JavaScript -->
     <script src="assets/js/main.js"></script>
-
     <script>
-        // Feedback visual para CSS
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.classList.add('js-loaded');
-            if (window.innerWidth <= 768) document.body.classList.add('is-mobile');
+// Script para melhorar a experiência do carrossel no mobile
+document.addEventListener('DOMContentLoaded', function() {
+    // Detectar se é mobile
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // Adicionar classe mobile para estilos específicos
+        document.body.classList.add('mobile-view');
+        
+        // Garantir que o carrossel seja scrollável
+        const carousels = document.querySelectorAll('.carrossel-inner');
+        
+        carousels.forEach(carousel => {
+            // Remover event listeners de drag se houver
+            carousel.style.cursor = 'grab';
+            
+            // Adicionar indicação visual de scroll
+            carousel.setAttribute('data-scrollable', 'true');
+            
+            // Adicionar sombra nos extremos para indicar mais conteúdo
+            const wrapper = carousel.closest('.carrossel-wrapper');
+            if (wrapper) {
+                wrapper.style.position = 'relative';
+                
+                // Adicionar gradientes para indicar scroll
+                wrapper.style.background = `
+                    linear-gradient(90deg, rgba(248,249,250,1) 0%, rgba(248,249,250,0) 5%, rgba(248,249,250,0) 95%, rgba(248,249,250,1) 100%)
+                `;
+            }
         });
-    </script>
+        
+        // Otimizar performance
+        document.querySelectorAll('.pacote-card').forEach(card => {
+            card.style.transform = 'translateZ(0)';
+        });
+    }
+});
+
+// Resetar scroll quando a janela for redimensionada
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+        document.body.classList.remove('mobile-view');
+    } else {
+        document.body.classList.add('mobile-view');
+    }
+});
+</script>
 </body>
 </html>
