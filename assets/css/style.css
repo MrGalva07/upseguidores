@@ -210,12 +210,56 @@ nav ul li a:hover {
     padding: 20px 0;
 }
 
+/* ============================================= */
+/* CARROSSEL INFINITO - NOVOS ESTILOS ADICIONADOS */
+/* ============================================= */
+
 .carrossel-inner {
     display: flex;
     gap: 25px;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s ease-in-out;
     padding: 0 10px;
 }
+
+/* Estilo para efeito de arrastar */
+.carrossel-inner.grabbing {
+    cursor: grabbing !important;
+    user-select: none;
+}
+
+/* Cards clonados (invisíveis para leitores de tela) */
+.cloned-card,
+.mobile-clone {
+    visibility: visible;
+}
+
+.cloned-card[aria-hidden="true"] {
+    opacity: 0.95;
+}
+
+/* Para mobile - scroll horizontal */
+@media (max-width: 768px) {
+    .carrossel-inner {
+        cursor: grab;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .carrossel-inner::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+    
+    .carrossel-inner.grabbing {
+        scroll-snap-type: none;
+    }
+}
+
+/* ============================================= */
 
 .pacote-card {
     background: white;
@@ -324,6 +368,45 @@ nav ul li a:hover {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    cursor: help;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.economia-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Tooltip para mostrar valores exatos */
+.economia-badge::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.economia-badge:hover::after {
+    opacity: 1;
+    visibility: visible;
+    bottom: calc(100% + 5px);
 }
 
 .whatsapp-pacote-btn {
@@ -1264,44 +1347,6 @@ footer {
     50% { transform: scale(1.05); }
 }
 
-/* Melhoria visual para o badge */
-.economia-badge {
-    transition: all 0.3s ease;
-    cursor: help;
-    position: relative;
-}
-
-.economia-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-/* Tooltip para mostrar valores exatos */
-.economia-badge::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #333;
-    color: white;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 1000;
-    pointer-events: none;
-}
-
-.economia-badge:hover::after {
-    opacity: 1;
-    visibility: visible;
-    bottom: calc(100% + 5px);
-}
-
 /* ============================================= */
 /* ESTILO PARA O ÍCONE DA BANDEIRA DO BRASIL NOS TÍTULOS */
 /* ============================================= */
@@ -1393,33 +1438,47 @@ footer {
         margin-bottom: 15px;
     }
     
+    /* CARROSSEL MOBILE - SCROLL HORIZONTAL */
+    .carrossel-instagram-br,
+    .carrossel-instagram-mix,
+    .carrossel-tiktok-br,
+    .carrossel-tiktok-mix {
+        padding: 15px 0;
+        overflow: visible !important;
+        width: 100%;
+    }
+    
     .carrossel-inner {
         display: flex;
         flex-wrap: nowrap;
         overflow-x: auto;
+        overflow-y: hidden;
         gap: 15px;
-        padding: 10px 5px;
-        scroll-snap-type: x mandatory;
+        padding: 10px 15px 15px;
+        margin: 0;
+        width: 100%;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-        scrollbar-color: #d42a7f #f0f0f0;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none; /* Firefox */
     }
     
     .carrossel-inner::-webkit-scrollbar {
-        height: 4px;
-    }
-    
-    .carrossel-inner::-webkit-scrollbar-thumb {
-        background: #d42a7f;
-        border-radius: 2px;
+        display: none;
     }
     
     .pacote-card {
-        min-width: 220px !important;
-        max-width: 220px !important;
-        padding: 20px 15px;
-        scroll-snap-align: start;
+        min-width: 200px !important;
+        max-width: 200px !important;
+        width: 200px !important;
+        padding: 18px 12px;
+        margin: 0;
         flex-shrink: 0;
+        scroll-snap-align: start;
+        border-radius: 10px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     
     .pacote-icon {
@@ -1429,7 +1488,7 @@ footer {
     }
     
     .pacote-quantidade {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .pacote-label {
@@ -1437,41 +1496,65 @@ footer {
     }
     
     .preco-riscado {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
     
     .preco-novo {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
     
     .pix-icon {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
     }
     
     .economia-badge {
         font-size: 0.75rem;
-        padding: 5px 10px;
+        padding: 4px 8px;
+        margin-bottom: 5px;
+        white-space: nowrap;
     }
     
     .whatsapp-pacote-btn {
-        padding: 12px 20px;
-        font-size: 0.9rem;
-        gap: 8px;
-    }
-    
-    .carrossel-btn {
-        display: none; /* Esconde botões de navegação no mobile */
-    }
-    
-    .disclaimer-pacotes {
-        margin-top: 30px;
-        padding: 15px;
+        padding: 10px 15px;
         font-size: 0.85rem;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    
+    /* REMOVER BOTÕES DE NAVEGAÇÃO NO MOBILE */
+    .carrossel-btn {
+        display: none !important;
+    }
+    
+    /* TÍTULOS RESPONSIVOS */
+    .rede-social-title {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        padding: 0 10px;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .carrossel-subtitle {
+        font-size: 1rem;
+        margin-bottom: 15px;
+        padding: 0 10px;
+        justify-content: center;
+    }
+    
+    /* DISCLAIMER RESPONSIVO */
+    .disclaimer-pacotes {
+        margin-top: 25px;
+        padding: 15px;
+        font-size: 0.8rem;
+        margin-left: 10px;
+        margin-right: 10px;
     }
     
     .disclaimer-pacotes p {
         flex-direction: column;
+        text-align: center;
         gap: 5px;
     }
     
@@ -1690,7 +1773,7 @@ footer {
     }
     
     .pacote-quantidade {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
     
     .preco-novo {
@@ -1741,17 +1824,17 @@ footer {
 /* Ajustes para telas muito pequenas (até 360px) */
 @media (max-width: 360px) {
     .pacote-card {
-        min-width: 160px !important;
-        max-width: 160px !important;
-        padding: 12px 10px;
+        min-width: 170px !important;
+        max-width: 170px !important;
+        padding: 12px 8px;
     }
     
     .pacote-quantidade {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
     }
     
     .preco-novo {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
     
     .hero h1 {
@@ -1833,261 +1916,6 @@ section + section {
         overflow: hidden;
     }
 }
-/* ============================================= */
-/* CORREÇÕES ESPECÍFICAS PARA SEÇÃO DE PACOTES - URGENTE */
-/* ============================================= */
-
-@media (max-width: 768px) {
-    /* CORREÇÃO RADICAL PARA A SEÇÃO DE PACOTES */
-    .pacotes-desconto {
-        overflow: hidden;
-        padding: 40px 0 20px;
-        margin-top: 60px;
-    }
-    
-    .pacotes-container {
-        gap: 25px;
-        width: 100%;
-        overflow: visible;
-    }
-    
-    /* FORÇAR REDES SOCIAIS A CABER NA TELA */
-    .rede-social-div {
-        width: 100%;
-        margin: 0;
-        padding: 20px 10px;
-        border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-        overflow: visible;
-    }
-    
-    /* REMOVER QUALQUER ESPAÇO EXTERNO */
-    .carrossel-wrapper {
-        margin: 0 -10px;
-        padding: 0 10px;
-        width: calc(100% + 20px);
-        overflow: visible;
-    }
-    
-    /* CARROSSEL MOBILE - SCROLL HORIZONTAL FUNCIONAL */
-    .carrossel-instagram-br,
-    .carrossel-instagram-mix,
-    .carrossel-tiktok-br,
-    .carrossel-tiktok-mix {
-        padding: 15px 0;
-        overflow: visible !important;
-        width: 100%;
-    }
-    
-    /* CONTAINER DO CARROSSEL - AGORA É SCROLLABLE */
-    .carrossel-inner {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 15px;
-        padding: 10px 15px 15px;
-        margin: 0;
-        width: 100%;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none; /* Firefox */
-    }
-    
-    /* Esconder scrollbar no Chrome/Safari */
-    .carrossel-inner::-webkit-scrollbar {
-        display: none;
-    }
-    
-    /* CARDS COM LARGURA FIXA PARA SCROLL */
-    .pacote-card {
-        min-width: 200px !important;
-        max-width: 200px !important;
-        width: 200px !important;
-        padding: 18px 12px;
-        margin: 0;
-        flex-shrink: 0;
-        scroll-snap-align: start;
-        border-radius: 10px;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    /* AJUSTES DE TEXTO NOS CARDS */
-    .pacote-quantidade {
-        font-size: 1.8rem;
-        margin-bottom: 5px;
-    }
-    
-    .pacote-label {
-        font-size: 0.75rem;
-        margin-bottom: 15px;
-        white-space: nowrap;
-    }
-    
-    .preco-riscado {
-        font-size: 0.85rem;
-    }
-    
-    .preco-novo {
-        font-size: 1.4rem;
-    }
-    
-    .pix-icon {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .economia-badge {
-        font-size: 0.7rem;
-        padding: 4px 8px;
-        margin-bottom: 5px;
-        white-space: nowrap;
-    }
-    
-    .whatsapp-pacote-btn {
-        padding: 10px 15px;
-        font-size: 0.85rem;
-        border-radius: 8px;
-        margin-top: 10px;
-    }
-    
-    /* REMOVER BOTÕES DE NAVEGAÇÃO NO MOBILE */
-    .carrossel-btn {
-        display: none !important;
-    }
-    
-    /* TÍTULOS RESPONSIVOS */
-    .rede-social-title {
-        font-size: 1.4rem;
-        margin-bottom: 20px;
-        padding: 0 10px;
-        justify-content: center;
-        text-align: center;
-    }
-    
-    .carrossel-subtitle {
-        font-size: 1rem;
-        margin-bottom: 15px;
-        padding: 0 10px;
-        justify-content: center;
-    }
-    
-    /* DISCLAIMER RESPONSIVO */
-    .disclaimer-pacotes {
-        margin-top: 25px;
-        padding: 15px;
-        font-size: 0.8rem;
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-    
-    .disclaimer-pacotes p {
-        flex-direction: column;
-        text-align: center;
-        gap: 5px;
-    }
-}
-
-/* CORREÇÃO ESPECIAL PARA MOBILE MUITO PEQUENO (iPhone SE, etc) */
-@media (max-width: 375px) {
-    .pacote-card {
-        min-width: 180px !important;
-        max-width: 180px !important;
-        width: 180px !important;
-        padding: 15px 10px;
-    }
-    
-    .pacote-quantidade {
-        font-size: 1.6rem;
-    }
-    
-    .preco-novo {
-        font-size: 1.3rem;
-    }
-    
-    .whatsapp-pacote-btn {
-        padding: 9px 12px;
-        font-size: 0.8rem;
-    }
-    
-    .rede-social-title {
-        font-size: 1.3rem;
-    }
-}
-
-/* CORREÇÃO PARA IPHONE 5/SE - TELAS MUITO PEQUENAS */
-@media (max-width: 320px) {
-    .pacote-card {
-        min-width: 170px !important;
-        max-width: 170px !important;
-        width: 170px !important;
-        padding: 12px 8px;
-    }
-    
-    .pacote-quantidade {
-        font-size: 1.5rem;
-    }
-    
-    .preco-novo {
-        font-size: 1.2rem;
-    }
-    
-    .pix-icon {
-        width: 18px;
-        height: 18px;
-    }
-    
-    .economia-badge {
-        font-size: 0.65rem;
-        padding: 3px 6px;
-    }
-}
-
-/* GARANTIR QUE NÃO HÁ OVERFLOW HORIZONTAL */
-@media (max-width: 768px) {
-    html, body {
-        overflow-x: hidden;
-        width: 100%;
-        position: relative;
-    }
-    
-    .pacotes-desconto .container {
-        padding: 0;
-        max-width: 100%;
-    }
-    
-    /* REMOVER QUALQUER MARGEM/ESPAÇO DESNECESSÁRIO */
-    .pacotes-desconto h2,
-    .section-subtitle {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
-}
-
-/* CORREÇÃO PARA OS BADGES DE ECONOMIA */
-.economia-badge {
-    display: inline-block;
-    text-align: center;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* GARANTIR QUE OS ELEMENTOS SE ENCAIXEM */
-.pacote-card * {
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-/* AJUSTE PARA OS ÍCONES DO PIX */
-.pacote-preco-atual {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 5px;
-}
 
 /* ============================================= */
 /* FALLBACK PARA JS DESABILITADO */
@@ -2117,4 +1945,40 @@ section + section {
     .carrossel-inner {
         will-change: scroll-position;
     }
+}
+
+/* ============================================= */
+/* GARANTIR QUE NÃO HÁ OVERFLOW HORIZONTAL */
+/* ============================================= */
+@media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+    }
+    
+    .pacotes-desconto .container {
+        padding: 0;
+        max-width: 100%;
+    }
+    
+    /* REMOVER QUALQUER MARGEM/ESPAÇO DESNECESSÁRIO */
+    .pacotes-desconto h2,
+    .section-subtitle {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+/* GARANTIR QUE OS ELEMENTOS SE ENCAIXEM */
+.pacote-card * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* AJUSTE PARA OS ÍCONES DO PIX */
+.pacote-preco-atual {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
 }
