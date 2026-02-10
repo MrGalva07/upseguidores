@@ -117,7 +117,7 @@ nav ul li a:hover {
 .pacotes-desconto {
     background-color: #f8f9fa;
     padding: 80px 0;
-    margin-top: 70px;
+    margin-top: 1px;
 }
 
 .pacotes-desconto h2 {
@@ -740,10 +740,12 @@ nav ul li a:hover {
     color: white;
     text-align: center;
     padding: 180px 0 100px;
-    min-height: 100vh;
+    min-height: 450px;
+    max-height: 500px;
+    height: auto;
     display: flex;
     align-items: center;
-    margin-top: 70px;
+    margin-top: 30px;
 }
 
 .hero-content {
@@ -1414,7 +1416,7 @@ footer {
     /* CORREÇÃO PARA PACOTES - MOBILE */
     .pacotes-desconto {
         padding: 40px 0;
-        margin-top: 60px;
+        margin-top: 1px;
     }
     
     .pacotes-container {
@@ -1629,7 +1631,7 @@ footer {
     .hero {
         padding: 140px 0 60px;
         min-height: auto;
-        margin-top: 60px;
+        margin-top: 10px;
     }
     
     .hero h1 {

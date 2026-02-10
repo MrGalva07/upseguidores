@@ -1,9 +1,10 @@
 // =============================================
 // SISTEMA DE CARROSSEL INFINITO - UpSeguidores
+// VERSÃO CORRIGIDA: Problema do reset rápido no mobile (SEM BOTÃO MANUAL)
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 UpSeguidores - Sistema carregado');
+   // console.log('🚀 UpSeguidores - Sistema carregado');
     
     // Inicializar todas as funcionalidades
     initAllFunctions();
@@ -50,7 +51,7 @@ function initAllFunctions() {
 // =============================================
 
 function initInfiniteCarousel() {
-  //  console.log('🔄 Inicializando carrossel infinito...');
+   // console.log('🔄 Inicializando carrossel infinito...');
     
     const carousels = document.querySelectorAll('.carrossel-inner');
     
@@ -62,7 +63,7 @@ function initInfiniteCarousel() {
     carousels.forEach((carousel, index) => {
         // Se já foi inicializado, pular
         if (carousel.classList.contains('carrossel-initialized')) {
-       //     console.log(`Carrossel ${index + 1} já inicializado`);
+          //  console.log(`Carrossel ${index + 1} já inicializado`);
             return;
         }
         
@@ -300,7 +301,8 @@ function setupDesktopCarousel(carousel, index) {
 }
 
 // =============================================
-// 1.2 CARROSSEL PARA MOBILE (SCROLL HORIZONTAL)
+// 1.2 CARROSSEL PARA MOBILE - VERSÃO SIMPLIFICADA E CORRIGIDA
+// RESOLVIDO: Problema do reset rápido SEM botão manual
 // =============================================
 
 function setupMobileCarousel(carousel, index) {
@@ -329,151 +331,131 @@ function setupMobileCarousel(carousel, index) {
     // Adicionar mais clones para mobile se necessário
     const cards = carousel.querySelectorAll('.pacote-card');
     const cardWidth = cards[0] ? cards[0].offsetWidth + 15 : 220;
-    const visibleCards = Math.floor(carousel.parentElement.offsetWidth / cardWidth);
     
     // Se tiver poucos cards, adicionar mais clones
-    if (cards.length < visibleCards * 2 && !carousel.hasAttribute('data-mobile-cloned')) {
-       // console.log(`📋 Adicionando clones extras para mobile no carrossel ${index + 1}`);
-        
+    if (cards.length < 6 && !carousel.hasAttribute('data-mobile-cloned')) {
         // Clonar os primeiros cards
-        const cardsToClone = Array.from(cards).slice(0, visibleCards);
+        const cardsToClone = Array.from(cards).slice(0, 3);
         cardsToClone.forEach(card => {
             const clone = card.cloneNode(true);
             clone.classList.add('mobile-clone');
+            clone.setAttribute('aria-hidden', 'true');
             carousel.appendChild(clone);
         });
         
         carousel.setAttribute('data-mobile-cloned', 'true');
     }
     
-    // Efeito de arrastar (drag)
-    let isDragging = false;
-    let startPosition = 0;
-    let currentTranslate = 0;
-    let prevTranslate = 0;
-    let animationID;
+    // VARIÁVEIS DE CONTROLE SIMPLIFICADAS
+    let resetTimer = null;
+    let isUserActive = false;
+    let lastActivityTime = Date.now();
+    
+    // Adicionar espaço extra no final
+    if (!carousel.querySelector('.end-spacer')) {
+        const spacer = document.createElement('div');
+        spacer.className = 'end-spacer';
+        spacer.style.cssText = `
+            min-width: 30px;
+            height: 1px;
+            flex-shrink: 0;
+        `;
+        carousel.appendChild(spacer);
+    }
+    
+    // FUNÇÃO: Verificar se chegou no final
+    function checkEndPosition() {
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        const currentScroll = carousel.scrollLeft;
+        const scrollThreshold = 50; // pixels do final
+        
+        return currentScroll >= maxScroll - scrollThreshold;
+    }
+    
+    // FUNÇÃO: Resetar para início (após inatividade)
+    function resetToStartIfInactive() {
+        if (!isUserActive && checkEndPosition()) {
+            // Esperar um pouco mais para garantir que o usuário viu o card
+            resetTimer = setTimeout(() => {
+                carousel.scrollTo({
+                    left: 0,
+                    behavior: 'smooth'
+                });
+              //  console.log(`🔄 Carrossel ${index + 1} resetado após inatividade`);
+            }, 5000); // 5 SEGUNDOS de inatividade no final
+        }
+    }
+    
+    // FUNÇÃO: Usuário está ativo
+    function userActivity() {
+        isUserActive = true;
+        lastActivityTime = Date.now();
+        
+        // Cancelar qualquer reset pendente
+        if (resetTimer) {
+            clearTimeout(resetTimer);
+            resetTimer = null;
+        }
+        
+        // Marcar como inativo após 2 segundos sem atividade
+        setTimeout(() => {
+            if (Date.now() - lastActivityTime >= 2000) {
+                isUserActive = false;
+                
+                // Verificar se está no final para reset automático
+                if (checkEndPosition()) {
+                    resetTimer = setTimeout(resetToStartIfInactive, 3000); // +3 segundos
+                }
+            }
+        }, 2000);
+    }
+    
+    // EVENT LISTENERS
+    // Scroll
+    carousel.addEventListener('scroll', userActivity);
     
     // Touch events
-    carousel.addEventListener('touchstart', touchStart, { passive: true });
-    carousel.addEventListener('touchmove', touchMove, { passive: true });
-    carousel.addEventListener('touchend', touchEnd);
+    carousel.addEventListener('touchstart', userActivity, { passive: true });
+    carousel.addEventListener('touchmove', userActivity, { passive: true });
+    carousel.addEventListener('touchend', userActivity, { passive: true });
     
-    // Mouse events (para tablets com mouse)
-    carousel.addEventListener('mousedown', mouseDown);
-    carousel.addEventListener('mousemove', mouseMove);
-    carousel.addEventListener('mouseup', mouseEnd);
-    carousel.addEventListener('mouseleave', mouseEnd);
+    // Mouse events
+    carousel.addEventListener('mousedown', userActivity);
+    carousel.addEventListener('mousemove', userActivity);
+    carousel.addEventListener('mouseup', userActivity);
     
-    function touchStart(event) {
-        startPosition = getPositionX(event);
-        isDragging = true;
-        animationID = requestAnimationFrame(animation);
-        carousel.classList.add('grabbing');
-    }
-    
-    function touchMove(event) {
-        if (!isDragging) return;
-        const currentPosition = getPositionX(event);
-        currentTranslate = prevTranslate + currentPosition - startPosition;
-    }
-    
-    function touchEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        cancelAnimationFrame(animationID);
-        
-        const movedBy = currentTranslate - prevTranslate;
-        
-        // Se arrastou o suficiente, mover para o próximo card
-        if (Math.abs(movedBy) > cardWidth * 0.3) {
-            if (movedBy < 0) {
-                // Scroll para a direita (próximo)
-                const scrollAmount = carousel.scrollLeft + cardWidth;
-                carousel.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
-                });
-            } else {
-                // Scroll para a esquerda (anterior)
-                const scrollAmount = carousel.scrollLeft - cardWidth;
-                carousel.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
-                });
+    // Click nos cards - desativa reset temporariamente
+    carousel.addEventListener('click', function(e) {
+        if (e.target.closest('.pacote-card') || e.target.closest('.whatsapp-pacote-btn')) {
+            // Quando clica em um card ou botão, desativa reset por 15 segundos
+            isUserActive = true;
+            
+            if (resetTimer) {
+                clearTimeout(resetTimer);
+                resetTimer = null;
             }
-        } else {
-            // Voltar para posição original
-            carousel.scrollTo({
-                left: carousel.scrollLeft,
-                behavior: 'smooth'
-            });
+            
+            // Reativar depois de 15 segundos
+            setTimeout(() => {
+                isUserActive = false;
+                if (checkEndPosition()) {
+                    resetToStartIfInactive();
+                }
+            }, 15000);
         }
-        
-        carousel.classList.remove('grabbing');
-        prevTranslate = currentTranslate;
-    }
+    }, true);
     
-    function mouseDown(event) {
-        startPosition = getPositionX(event);
-        isDragging = true;
-        carousel.classList.add('grabbing');
-        event.preventDefault();
-    }
-    
-    function mouseMove(event) {
-        if (!isDragging) return;
-        const currentPosition = getPositionX(event);
-        currentTranslate = prevTranslate + currentPosition - startPosition;
-    }
-    
-    function mouseEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        touchEnd(); // Reutiliza a lógica do touch
-    }
-    
-    function getPositionX(event) {
-        return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-    }
-    
-    function animation() {
-        if (isDragging) {
-            carousel.style.transform = `translateX(${currentTranslate}px)`;
-            requestAnimationFrame(animation);
+    // Verificar periodicamente se está no final
+    setInterval(() => {
+        if (!isUserActive && checkEndPosition()) {
+            resetToStartIfInactive();
         }
-    }
+    }, 1000);
     
-    // Infinite scroll para mobile
-    let scrollTimeout;
-    carousel.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
-            const currentScroll = carousel.scrollLeft;
-            
-            // Se chegou perto do final, resetar para início
-            if (currentScroll >= maxScrollLeft - cardWidth) {
-                setTimeout(() => {
-                    carousel.scrollTo({
-                        left: 0,
-                        behavior: 'smooth'
-                    });
-                }, 300);
-            }
-            
-            // Se está no início e veio do final, ir para o final
-            if (currentScroll <= cardWidth && prevTranslate < -maxScrollLeft * 0.5) {
-                setTimeout(() => {
-                    carousel.scrollTo({
-                        left: maxScrollLeft,
-                        behavior: 'smooth'
-                    });
-                }, 300);
-            }
-            
-            prevTranslate = currentScroll;
-        }, 100);
-    });
+    // Inicializar estado
+    setTimeout(() => {
+        isUserActive = false;
+    }, 3000);
 }
 
 // =============================================
@@ -980,7 +962,7 @@ function setupResponsiveAdjustments() {
 ║    🚀 UPSEGUIDORES - SISTEMA ATIVADO        ║
 ╠══════════════════════════════════════════════╣
 ║ 🎡 Carrossel Infinito:   PRONTO             ║
-║ 📱 Responsividade:       OTIMIZADA          ║
+║ 📱 Mobile Corrigido:     SEM RESET RÁPIDO   ║
 ║ 📊 GTM Tracking:         CONFIGURADO        ║
 ║ 🎯 Animações:            ATIVAS             ║
 ║ 💬 Botões WhatsApp:      FUNCIONANDO        ║
