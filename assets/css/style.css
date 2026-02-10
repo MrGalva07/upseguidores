@@ -810,6 +810,7 @@ nav ul li a:hover {
 .secondary-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: space-around;
     background-color: transparent;
     color: white;
     padding: 15px 30px;
@@ -1779,9 +1780,12 @@ footer {
     }
     
     .preco-novo {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
     }
-    
+    .moeda{
+        font-size: 0.65rem;
+          color: #25D366;
+    }
     .pix-icon {
         width: 20px;
         height: 20px;
