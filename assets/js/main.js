@@ -50,7 +50,7 @@ function initAllFunctions() {
 // =============================================
 
 function initInfiniteCarousel() {
-    console.log('🔄 Inicializando carrossel infinito...');
+  //  console.log('🔄 Inicializando carrossel infinito...');
     
     const carousels = document.querySelectorAll('.carrossel-inner');
     
@@ -62,7 +62,7 @@ function initInfiniteCarousel() {
     carousels.forEach((carousel, index) => {
         // Se já foi inicializado, pular
         if (carousel.classList.contains('carrossel-initialized')) {
-            console.log(`Carrossel ${index + 1} já inicializado`);
+       //     console.log(`Carrossel ${index + 1} já inicializado`);
             return;
         }
         
@@ -99,7 +99,7 @@ function initInfiniteCarousel() {
 // =============================================
 
 function setupDesktopCarousel(carousel, index) {
-    console.log(`🎡 Configurando carrossel ${index + 1} para DESKTOP`);
+   // console.log(`🎡 Configurando carrossel ${index + 1} para DESKTOP`);
     
     // Obter elementos
     const wrapper = carousel.closest('.carrossel-wrapper');
@@ -124,7 +124,7 @@ function setupDesktopCarousel(carousel, index) {
         // Verificar se já tem clones
         if (carousel.hasAttribute('data-cloned')) return;
         
-        console.log(`📋 Clonando cards para carrossel ${index + 1}`);
+       // console.log(`📋 Clonando cards para carrossel ${index + 1}`);
         
         // Clonar todos os cards e adicionar no final
         const cardsToClone = Array.from(cards);
@@ -304,7 +304,7 @@ function setupDesktopCarousel(carousel, index) {
 // =============================================
 
 function setupMobileCarousel(carousel, index) {
-    console.log(`📱 Configurando carrossel ${index + 1} para MOBILE`);
+   // console.log(`📱 Configurando carrossel ${index + 1} para MOBILE`);
     
     // Esconder botões de navegação no mobile
     const wrapper = carousel.closest('.carrossel-wrapper');
@@ -333,7 +333,7 @@ function setupMobileCarousel(carousel, index) {
     
     // Se tiver poucos cards, adicionar mais clones
     if (cards.length < visibleCards * 2 && !carousel.hasAttribute('data-mobile-cloned')) {
-        console.log(`📋 Adicionando clones extras para mobile no carrossel ${index + 1}`);
+       // console.log(`📋 Adicionando clones extras para mobile no carrossel ${index + 1}`);
         
         // Clonar os primeiros cards
         const cardsToClone = Array.from(cards).slice(0, visibleCards);
@@ -536,7 +536,7 @@ function initComparativoAnimations() {
         if (animationTriggered) return;
         animationTriggered = true;
         
-        console.log('🚀 Iniciando animação do comparativo');
+       // console.log('🚀 Iniciando animação do comparativo');
         
         // Animar apenas os seguidores
         animateCounter('seguidores-depois', 127, 5127, 2000);
@@ -651,7 +651,7 @@ function initGTMEvents() {
         window.dataLayer = window.dataLayer || [];
     }
     
-    console.log('📊 GTM configurado: GTM-MMQ89T46');
+   // console.log('📊 GTM configurado: GTM-MMQ89T46');
     
     // Evento de página carregada
     window.dataLayer.push({
@@ -975,7 +975,7 @@ function setupResponsiveAdjustments() {
 // MENSAGEM DE CONSOLE
 // =============================================
 
-console.log(`
+/*console.log(`
 ╔══════════════════════════════════════════════╗
 ║    🚀 UPSEGUIDORES - SISTEMA ATIVADO        ║
 ╠══════════════════════════════════════════════╣
@@ -985,4 +985,4 @@ console.log(`
 ║ 🎯 Animações:            ATIVAS             ║
 ║ 💬 Botões WhatsApp:      FUNCIONANDO        ║
 ╚══════════════════════════════════════════════╝
-`);
+`);*/
