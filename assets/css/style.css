@@ -2013,3 +2013,211 @@ footer {
     justify-content: center;
     gap: 5px;
 }
+/* ============================================= */
+/* CORREÇÕES PARA CARROSSEL INFINITO MOBILE */
+/* ============================================= */
+
+/* Esconder clones originais que não são mais usados */
+.mobile-clone {
+    display: none !important;
+}
+
+/* Estilizar os novos clones infinitos */
+.mobile-infinite-clone {
+    display: flex !important;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
+
+/* Garantir que o carrossel mobile tenha scroll horizontal infinito */
+@media (max-width: 768px) {
+    .carrossel-initialized {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory !important;
+        -webkit-overflow-scrolling: touch !important;
+        scroll-behavior: smooth !important;
+        cursor: grab !important;
+    }
+    
+    /* Remover qualquer transform que possa quebrar o scroll */
+    .carrossel-initialized {
+        transform: none !important;
+        transition: none !important;
+    }
+    
+    /* Garantir que os cards mantenham tamanho consistente */
+    .pacote-card, .mobile-infinite-clone {
+        min-width: 200px !important;
+        max-width: 200px !important;
+        width: 200px !important;
+        flex-shrink: 0;
+        scroll-snap-align: start;
+        margin: 0 !important;
+    }
+    
+    /* Esconder botões de navegação no mobile */
+    .carrossel-btn {
+        display: none !important;
+    }
+    
+    /* Garantir que o wrapper não corte o conteúdo */
+    .carrossel-wrapper {
+        overflow: visible !important;
+        position: relative;
+    }
+    
+    /* Adicionar gradiente para indicar que há mais conteúdo */
+    .carrossel-wrapper::before,
+    .carrossel-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 30px;
+        height: 100%;
+        pointer-events: none;
+        z-index: 5;
+    }
+    
+    .carrossel-wrapper::before {
+        left: 0;
+        background: linear-gradient(90deg, rgba(248,249,250,1) 0%, rgba(248,249,250,0) 100%);
+    }
+    
+    .carrossel-wrapper::after {
+        right: 0;
+        background: linear-gradient(90deg, rgba(248,249,250,0) 0%, rgba(248,249,250,1) 100%);
+    }
+    
+    /* Estilo para quando está arrastando */
+    .grabbing {
+        cursor: grabbing !important;
+        user-select: none !important;
+    }
+    
+    /* Remover scrollbar em alguns navegadores */
+    .carrossel-initialized::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .carrossel-initialized {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+/* ============================================= */
+/* AJUSTES PARA EVITAR FLICKERING NO MOBILE */
+/* ============================================= */
+
+/* Forçar hardware acceleration */
+.pacote-card, .mobile-infinite-clone {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Transição suave para hover effects */
+.pacote-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* ============================================= */
+/* CORREÇÕES DE ESPAÇAMENTO */
+/* ============================================= */
+
+/* Garantir espaçamento consistente entre cards */
+.carrossel-inner {
+    gap: 15px !important;
+    padding: 10px 5px !important;
+}
+
+@media (max-width: 768px) {
+    .carrossel-inner {
+        padding: 10px 15px 15px !important;
+        gap: 15px !important;
+    }
+}
+
+/* ============================================= */
+/* FIX PARA iOS SAFARI */
+/* ============================================= */
+
+@supports (-webkit-touch-callout: none) {
+    .carrossel-initialized {
+        -webkit-overflow-scrolling: touch !important;
+        overflow-scrolling: touch !important;
+    }
+    
+    /* Prevenir bounce effect no iOS */
+    .carrossel-initialized {
+        overscroll-behavior-x: contain;
+    }
+}
+
+/* ============================================= */
+/* MELHORIAS VISUAIS PARA O CARROSSEL */
+/* ============================================= */
+
+/* Sombra sutil nos cards */
+.pacote-card {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
+.pacote-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* ============================================= */
+/* CORREÇÕES DE ALTURA PARA CONSISTÊNCIA */
+/* ============================================= */
+
+/* Garantir que todos os cards tenham mesma altura */
+.pacote-card, .cloned-card, .mobile-infinite-clone {
+    height: auto !important;
+    min-height: 320px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Botão sempre no final do card */
+.whatsapp-pacote-btn {
+    margin-top: auto !important;
+}
+
+/* ============================================= */
+/* AJUSTES PARA HERO SECTION AINDA MAIS ACHATADA */
+/* ============================================= */
+
+.hero {
+    min-height: 380px !important; /* Ainda mais achatado */
+    padding: 110px 0 60px !important;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 300px !important;
+        padding: 90px 0 40px !important;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem !important;
+        line-height: 1.2 !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .subtitle {
+        font-size: 0.95rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 20px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        min-height: 280px !important;
+        padding: 80px 0 30px !important;
+    }
+}

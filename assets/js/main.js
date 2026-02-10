@@ -3,8 +3,6 @@
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 UpSeguidores - Sistema carregado');
-    
     // Inicializar todas as funcionalidades
     initAllFunctions();
 });
@@ -14,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // =============================================
 
 function initAllFunctions() {
-    // 1. Carrossel infinito (PRIORIDADE)
+    // 1. Carrossel infinito (PRIORIDADE) - Corrigido para mobile
     initInfiniteCarousel();
     
     // 2. Menu mobile
@@ -43,6 +41,31 @@ function initAllFunctions() {
     
     // 10. Ajustes responsivos
     setupResponsiveAdjustments();
+    
+    // 11. Ajustar hero section
+    adjustHeroSection();
+}
+
+// =============================================
+// FUNÇÃO PARA AJUSTAR HERO SECTION
+// =============================================
+
+function adjustHeroSection() {
+    // Garantir que a hero não cubra outros elementos
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        // Ajustar margens baseado no header
+        const header = document.querySelector('header');
+        if (header) {
+            hero.style.marginTop = header.offsetHeight + 'px';
+        }
+        
+        // Otimizar para mobile
+        if (window.innerWidth <= 768) {
+            hero.style.minHeight = '320px';
+            hero.style.padding = '100px 0 40px';
+        }
+    }
 }
 
 // =============================================
@@ -50,19 +73,15 @@ function initAllFunctions() {
 // =============================================
 
 function initInfiniteCarousel() {
-    console.log('🔄 Inicializando carrossel infinito...');
-    
     const carousels = document.querySelectorAll('.carrossel-inner');
     
     if (carousels.length === 0) {
-        console.warn('⚠️ Nenhum carrossel encontrado');
         return;
     }
     
     carousels.forEach((carousel, index) => {
         // Se já foi inicializado, pular
         if (carousel.classList.contains('carrossel-initialized')) {
-            console.log(`Carrossel ${index + 1} já inicializado`);
             return;
         }
         
@@ -99,16 +118,19 @@ function initInfiniteCarousel() {
 // =============================================
 
 function setupDesktopCarousel(carousel, index) {
-    console.log(`🎡 Configurando carrossel ${index + 1} para DESKTOP`);
+    // Se for mobile, usar configuração mobile
+    if (window.innerWidth <= 768) {
+        setupMobileCarousel(carousel, index);
+        return;
+    }
     
     // Obter elementos
     const wrapper = carousel.closest('.carrossel-wrapper');
     const prevBtn = wrapper ? wrapper.querySelector('.carrossel-prev') : null;
     const nextBtn = wrapper ? wrapper.querySelector('.carrossel-next') : null;
-    const cards = carousel.querySelectorAll('.pacote-card');
+    const cards = carousel.querySelectorAll('.pacote-card:not(.cloned-card):not(.mobile-clone)');
     
     if (cards.length === 0) {
-        console.warn(`⚠️ Carrossel ${index + 1} sem cards`);
         return;
     }
     
@@ -124,7 +146,9 @@ function setupDesktopCarousel(carousel, index) {
         // Verificar se já tem clones
         if (carousel.hasAttribute('data-cloned')) return;
         
-        console.log(`📋 Clonando cards para carrossel ${index + 1}`);
+        // Remover clones antigos se existirem
+        const oldClones = carousel.querySelectorAll('.cloned-card');
+        oldClones.forEach(clone => clone.remove());
         
         // Clonar todos os cards e adicionar no final
         const cardsToClone = Array.from(cards);
@@ -265,10 +289,6 @@ function setupDesktopCarousel(carousel, index) {
         stopAutoPlay();
     }, { passive: true });
     
-    carousel.addEventListener('touchmove', (e) => {
-        e.preventDefault(); // Prevenir scroll da página
-    }, { passive: false });
-    
     carousel.addEventListener('touchend', (e) => {
         touchEndX = e.changedTouches[0].clientX;
         const swipeThreshold = 50;
@@ -300,12 +320,10 @@ function setupDesktopCarousel(carousel, index) {
 }
 
 // =============================================
-// 1.2 CARROSSEL PARA MOBILE (SCROLL HORIZONTAL)
+// 1.2 CARROSSEL PARA MOBILE (SCROLL HORIZONTAL INFINITO)
 // =============================================
 
 function setupMobileCarousel(carousel, index) {
-    console.log(`📱 Configurando carrossel ${index + 1} para MOBILE`);
-    
     // Esconder botões de navegação no mobile
     const wrapper = carousel.closest('.carrossel-wrapper');
     const prevBtn = wrapper ? wrapper.querySelector('.carrossel-prev') : null;
@@ -326,154 +344,194 @@ function setupMobileCarousel(carousel, index) {
     carousel.style.transition = 'none';
     carousel.style.transform = 'none';
     
-    // Adicionar mais clones para mobile se necessário
-    const cards = carousel.querySelectorAll('.pacote-card');
-    const cardWidth = cards[0] ? cards[0].offsetWidth + 15 : 220;
-    const visibleCards = Math.floor(carousel.parentElement.offsetWidth / cardWidth);
+    // Obter cards originais (sem clones)
+    const originalCards = carousel.querySelectorAll('.pacote-card:not(.cloned-card):not(.mobile-clone)');
+    if (originalCards.length === 0) return;
     
-    // Se tiver poucos cards, adicionar mais clones
-    if (cards.length < visibleCards * 2 && !carousel.hasAttribute('data-mobile-cloned')) {
-        console.log(`📋 Adicionando clones extras para mobile no carrossel ${index + 1}`);
+    const cardWidth = originalCards[0].offsetWidth + 15;
+    const containerWidth = carousel.parentElement.offsetWidth;
+    const visibleCards = Math.floor(containerWidth / cardWidth);
+    
+    // 1. CLONAR CARDS PARA EFEITO INFINITO NO MOBILE
+    function cloneCardsForMobileInfinite() {
+        // Verificar se já tem clones mobile
+        if (carousel.hasAttribute('data-mobile-infinite')) return;
         
-        // Clonar os primeiros cards
-        const cardsToClone = Array.from(cards).slice(0, visibleCards);
+        // Remover clones antigos se existirem
+        const oldMobileClones = carousel.querySelectorAll('.mobile-infinite-clone');
+        oldMobileClones.forEach(clone => clone.remove());
+        
+        // Adicionar clones suficientes para criar efeito infinito
+        // Clonar no início e no final
+        const cardsToClone = Array.from(originalCards);
+        
+        // Clonar para o final (para scroll infinito)
         cardsToClone.forEach(card => {
             const clone = card.cloneNode(true);
-            clone.classList.add('mobile-clone');
+            clone.classList.add('mobile-infinite-clone');
+            clone.setAttribute('aria-hidden', 'true');
             carousel.appendChild(clone);
         });
         
-        carousel.setAttribute('data-mobile-cloned', 'true');
-    }
-    
-    // Efeito de arrastar (drag)
-    let isDragging = false;
-    let startPosition = 0;
-    let currentTranslate = 0;
-    let prevTranslate = 0;
-    let animationID;
-    
-    // Touch events
-    carousel.addEventListener('touchstart', touchStart, { passive: true });
-    carousel.addEventListener('touchmove', touchMove, { passive: true });
-    carousel.addEventListener('touchend', touchEnd);
-    
-    // Mouse events (para tablets com mouse)
-    carousel.addEventListener('mousedown', mouseDown);
-    carousel.addEventListener('mousemove', mouseMove);
-    carousel.addEventListener('mouseup', mouseEnd);
-    carousel.addEventListener('mouseleave', mouseEnd);
-    
-    function touchStart(event) {
-        startPosition = getPositionX(event);
-        isDragging = true;
-        animationID = requestAnimationFrame(animation);
-        carousel.classList.add('grabbing');
-    }
-    
-    function touchMove(event) {
-        if (!isDragging) return;
-        const currentPosition = getPositionX(event);
-        currentTranslate = prevTranslate + currentPosition - startPosition;
-    }
-    
-    function touchEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        cancelAnimationFrame(animationID);
+        // Clonar para o início (para scroll reverso)
+        const firstFewCards = Array.from(originalCards).slice(0, visibleCards + 1);
+        firstFewCards.reverse().forEach(card => {
+            const clone = card.cloneNode(true);
+            clone.classList.add('mobile-infinite-clone');
+            clone.setAttribute('aria-hidden', 'true');
+            carousel.prepend(clone);
+        });
         
-        const movedBy = currentTranslate - prevTranslate;
-        
-        // Se arrastou o suficiente, mover para o próximo card
-        if (Math.abs(movedBy) > cardWidth * 0.3) {
-            if (movedBy < 0) {
-                // Scroll para a direita (próximo)
-                const scrollAmount = carousel.scrollLeft + cardWidth;
-                carousel.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
-                });
-            } else {
-                // Scroll para a esquerda (anterior)
-                const scrollAmount = carousel.scrollLeft - cardWidth;
-                carousel.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
-                });
-            }
-        } else {
-            // Voltar para posição original
-            carousel.scrollTo({
-                left: carousel.scrollLeft,
-                behavior: 'smooth'
-            });
-        }
-        
-        carousel.classList.remove('grabbing');
-        prevTranslate = currentTranslate;
-    }
-    
-    function mouseDown(event) {
-        startPosition = getPositionX(event);
-        isDragging = true;
-        carousel.classList.add('grabbing');
-        event.preventDefault();
-    }
-    
-    function mouseMove(event) {
-        if (!isDragging) return;
-        const currentPosition = getPositionX(event);
-        currentTranslate = prevTranslate + currentPosition - startPosition;
-    }
-    
-    function mouseEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        touchEnd(); // Reutiliza a lógica do touch
-    }
-    
-    function getPositionX(event) {
-        return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-    }
-    
-    function animation() {
-        if (isDragging) {
-            carousel.style.transform = `translateX(${currentTranslate}px)`;
-            requestAnimationFrame(animation);
-        }
-    }
-    
-    // Infinite scroll para mobile
-    let scrollTimeout;
-    carousel.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            const maxScrollLeft = carousel.scrollWidth - carousel.clientWidth;
-            const currentScroll = carousel.scrollLeft;
-            
-            // Se chegou perto do final, resetar para início
-            if (currentScroll >= maxScrollLeft - cardWidth) {
-                setTimeout(() => {
-                    carousel.scrollTo({
-                        left: 0,
-                        behavior: 'smooth'
-                    });
-                }, 300);
-            }
-            
-            // Se está no início e veio do final, ir para o final
-            if (currentScroll <= cardWidth && prevTranslate < -maxScrollLeft * 0.5) {
-                setTimeout(() => {
-                    carousel.scrollTo({
-                        left: maxScrollLeft,
-                        behavior: 'smooth'
-                    });
-                }, 300);
-            }
-            
-            prevTranslate = currentScroll;
+        // Rolar para a primeira posição original (depois dos clones do início)
+        setTimeout(() => {
+            carousel.scrollLeft = (visibleCards + 1) * cardWidth;
         }, 100);
-    });
+        
+        carousel.setAttribute('data-mobile-infinite', 'true');
+    }
+    
+    // Executar clonagem
+    cloneCardsForMobileInfinite();
+    
+    // 2. DETECTAR SCROLL PARA CRIAR EFEITO INFINITO
+    let isScrolling = false;
+    let scrollTimeout;
+    
+    carousel.addEventListener('scroll', () => {
+        if (isScrolling) return;
+        
+        clearTimeout(scrollTimeout);
+        isScrolling = true;
+        
+        const scrollLeft = carousel.scrollLeft;
+        const scrollWidth = carousel.scrollWidth;
+        const clientWidth = carousel.clientWidth;
+        const totalCards = originalCards.length + document.querySelectorAll('.mobile-infinite-clone').length;
+        
+        // Se chegou perto do final (últimos 30% dos clones finais)
+        const finalThreshold = scrollWidth - (clientWidth * 0.7);
+        if (scrollLeft >= finalThreshold) {
+            // Rolar suavemente para o meio (onde estão os cards originais)
+            setTimeout(() => {
+                carousel.scrollTo({
+                    left: (visibleCards + 2) * cardWidth,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        }
+        
+        // Se voltou para o início (primeiros 30% dos clones iniciais)
+        const startThreshold = clientWidth * 0.3;
+        if (scrollLeft <= startThreshold) {
+            // Rolar suavemente para antes do final dos clones iniciais
+            setTimeout(() => {
+                const targetScroll = scrollWidth - (visibleCards + 3) * cardWidth;
+                carousel.scrollTo({
+                    left: targetScroll,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        }
+        
+        scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+        }, 150);
+    }, { passive: true });
+    
+    // 3. EFEITO DE ARRASTAR MELHORADO
+    let isDragging = false;
+    let startX = 0;
+    let scrollLeftStart = 0;
+    
+    carousel.addEventListener('mousedown', startDrag);
+    carousel.addEventListener('touchstart', startDrag, { passive: true });
+    
+    function startDrag(e) {
+        isDragging = true;
+        carousel.classList.add('grabbing');
+        startX = (e.type === 'mousedown') ? e.pageX : e.touches[0].pageX;
+        scrollLeftStart = carousel.scrollLeft;
+        
+        // Prevenir seleção de texto durante o drag
+        document.body.style.userSelect = 'none';
+        
+        if (e.type === 'mousedown') {
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', endDrag);
+        } else {
+            document.addEventListener('touchmove', drag, { passive: true });
+            document.addEventListener('touchend', endDrag);
+        }
+    }
+    
+    function drag(e) {
+        if (!isDragging) return;
+        
+        const x = (e.type === 'mousemove') ? e.pageX : e.touches[0].pageX;
+        const walk = (x - startX) * 1.5; // Velocidade do arraste
+        carousel.scrollLeft = scrollLeftStart - walk;
+    }
+    
+    function endDrag() {
+        isDragging = false;
+        carousel.classList.remove('grabbing');
+        document.body.style.userSelect = '';
+        
+        // Remover event listeners
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', endDrag);
+        document.removeEventListener('touchmove', drag);
+        document.removeEventListener('touchend', endDrag);
+    }
+    
+    // 4. EVITAR QUE O SCROLL VERTICAL DA PÁGINA SEJA ATIVADO
+    carousel.addEventListener('touchmove', (e) => {
+        if (isDragging) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // 5. INICIALIZAR COM POSIÇÃO CORRETA
+    setTimeout(() => {
+        if (!carousel.hasAttribute('data-initial-scroll')) {
+            carousel.scrollLeft = (visibleCards + 1) * cardWidth;
+            carousel.setAttribute('data-initial-scroll', 'true');
+        }
+    }, 200);
+    // Adicione isto no final da função setupMobileCarousel(), antes do fechamento }
+
+// 6. PREVENIR PROBLEMAS DE RENDERIZAÇÃO NO MOBILE
+setTimeout(() => {
+    // Forçar reflow para evitar bugs visuais
+    carousel.style.display = 'none';
+    carousel.offsetHeight; // Trigger reflow
+    carousel.style.display = 'flex';
+    
+    // Garantir que está na posição inicial correta
+    if (!carousel.hasAttribute('data-position-set')) {
+        const visibleCards = Math.floor(carousel.parentElement.offsetWidth / cardWidth);
+        carousel.scrollLeft = (visibleCards + 1) * cardWidth;
+        carousel.setAttribute('data-position-set', 'true');
+    }
+}, 100);
+
+// 7. RESETAR AO SAIR DA PÁGINA E VOLTAR
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && window.innerWidth <= 768) {
+        // Verificar se precisa reposicionar
+        const visibleCards = Math.floor(carousel.parentElement.offsetWidth / cardWidth);
+        const expectedPosition = (visibleCards + 1) * cardWidth;
+        
+        if (Math.abs(carousel.scrollLeft - expectedPosition) > cardWidth * 2) {
+            setTimeout(() => {
+                carousel.scrollTo({
+                    left: expectedPosition,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        }
+    }
+});
 }
 
 // =============================================
@@ -535,8 +593,6 @@ function initComparativoAnimations() {
     function startAnimation() {
         if (animationTriggered) return;
         animationTriggered = true;
-        
-        console.log('🚀 Iniciando animação do comparativo');
         
         // Animar apenas os seguidores
         animateCounter('seguidores-depois', 127, 5127, 2000);
@@ -650,8 +706,6 @@ function initGTMEvents() {
     if (typeof dataLayer === 'undefined') {
         window.dataLayer = window.dataLayer || [];
     }
-    
-    console.log('📊 GTM configurado: GTM-MMQ89T46');
     
     // Evento de página carregada
     window.dataLayer.push({
@@ -886,7 +940,7 @@ function initAutoDiscountCalculation() {
     };
     
     function calculateAllDiscounts() {
-        document.querySelectorAll('.pacote-card').forEach(card => {
+        document.querySelectorAll('.pacote-card:not(.cloned-card):not(.mobile-infinite-clone):not(.mobile-clone)').forEach(card => {
             const quantidade = card.getAttribute('data-quantidade');
             const tipo = card.getAttribute('data-tipo');
             const rede = card.getAttribute('data-rede');
@@ -970,19 +1024,3 @@ function setupResponsiveAdjustments() {
         resizeTimer = setTimeout(adjustTestimonialHeights, 250);
     });
 }
-
-// =============================================
-// MENSAGEM DE CONSOLE
-// =============================================
-
-console.log(`
-╔══════════════════════════════════════════════╗
-║    🚀 UPSEGUIDORES - SISTEMA ATIVADO        ║
-╠══════════════════════════════════════════════╣
-║ 🎡 Carrossel Infinito:   PRONTO             ║
-║ 📱 Responsividade:       OTIMIZADA          ║
-║ 📊 GTM Tracking:         CONFIGURADO        ║
-║ 🎯 Animações:            ATIVAS             ║
-║ 💬 Botões WhatsApp:      FUNCIONANDO        ║
-╚══════════════════════════════════════════════╝
-`);
