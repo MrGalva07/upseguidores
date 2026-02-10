@@ -1355,7 +1355,7 @@ footer {
 
 /* Container do subtítulo com a bandeira */
 .carrossel-subtitle {
-    font-size: 1.3rem;
+    font-size: 1.6rem;
     margin-bottom: 20px;
     color: #333;
     display: flex;
@@ -1819,7 +1819,7 @@ footer {
     }
     
     .carrossel-subtitle {
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 }
 
