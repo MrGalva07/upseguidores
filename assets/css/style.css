@@ -44,7 +44,7 @@ h2:after {
 header {
     background: linear-gradient(135deg, #d42a7f 0%, #8a3ab9 100%);
     color: white;
-    padding: 20px 0;
+    padding: 15px 0; /* Reduzido para combinar com hero menor */
     position: fixed;
     width: 100%;
     top: 0;
@@ -116,8 +116,8 @@ nav ul li a:hover {
 
 .pacotes-desconto {
     background-color: #f8f9fa;
-    padding: 80px 0;
-    margin-top: 70px;
+    padding: 60px 0; /* Reduzido */
+    margin-top: 30px; /* Reduzido para compensar hero menor */
 }
 
 .pacotes-desconto h2 {
@@ -732,50 +732,53 @@ nav ul li a:hover {
 }
 
 /* ============================================= */
-/* HERO SECTION */
+/* HERO SECTION - CORRIGIDA E "ACHATADA" */
 /* ============================================= */
 
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80') no-repeat center center/cover;
     color: white;
     text-align: center;
-    padding: 180px 0 100px;
-    min-height: 100vh;
+    padding: 120px 0 80px; /* Reduzido para combinar com altura menor */
+    min-height: 450px; /* Alterado de height para min-height e valor reduzido */
     display: flex;
     align-items: center;
     margin-top: 70px;
+    position: relative;
 }
 
 .hero-content {
     width: 100%;
     padding: 0 20px;
     animation: fadeIn 1s ease-in;
+    position: relative;
+    z-index: 2;
 }
 
 .hero h1 {
-    font-size: 3rem;
-    margin-bottom: 25px;
+    font-size: 2.8rem; /* Levemente reduzido */
+    margin-bottom: 20px; /* Reduzido */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     line-height: 1.2;
     font-weight: 700;
 }
 
 .subtitle {
-    font-size: 1.3rem;
+    font-size: 1.2rem; /* Levemente reduzido */
     max-width: 800px;
-    margin: 0 auto 40px;
+    margin: 0 auto 30px; /* Reduzido */
     animation: fadeIn 1.5s ease-in;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     opacity: 0.9;
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 /* Botões CTA */
 .cta-buttons {
     display: flex;
     justify-content: center;
-    gap: 25px;
-    margin-top: 40px;
+    gap: 20px; /* Reduzido */
+    margin-top: 30px; /* Reduzido */
     flex-wrap: wrap;
     animation: fadeIn 2s ease-in;
 }
@@ -830,6 +833,7 @@ nav ul li a:hover {
 
 .processo {
     background-color: #fcf3f8;
+    padding-top: 60px; /* Aumentado levemente para compensar hero menor */
 }
 
 .processo-grid {
@@ -1414,7 +1418,7 @@ footer {
     /* CORREÇÃO PARA PACOTES - MOBILE */
     .pacotes-desconto {
         padding: 40px 0;
-        margin-top: 60px;
+        margin-top: 20px; /* Reduzido */
     }
     
     .pacotes-container {
@@ -1625,29 +1629,32 @@ footer {
         font-size: 1.8rem;
     }
     
-    /* CORREÇÃO PARA HERO - MOBILE */
+    /* ============================================= */
+    /* CORREÇÃO PARA HERO "ACHATADA" - MOBILE */
+    /* ============================================= */
     .hero {
-        padding: 140px 0 60px;
-        min-height: auto;
-        margin-top: 60px;
+        padding: 100px 0 50px; /* Ajustado para mobile */
+        min-height: 350px; /* Reduzido em mobile */
+        margin-top: 60px; /* Ajustado */
     }
     
     .hero h1 {
-        font-size: 2.2rem;
+        font-size: 2rem; /* Ajustado */
+        margin-bottom: 15px;
         padding: 0 10px;
     }
     
     .subtitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
         padding: 0 15px;
-        margin-bottom: 30px;
+        margin-bottom: 20px; /* Reduzido */
     }
     
     .cta-buttons {
+        margin-top: 20px; /* Reduzido */
+        gap: 15px;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
-        margin-top: 30px;
     }
     
     .whatsapp-btn,
@@ -1655,6 +1662,7 @@ footer {
         width: 100%;
         max-width: 300px;
         padding: 14px 25px;
+        font-size: 1rem;
     }
     
     /* MENU HAMBURGUER */
@@ -1755,7 +1763,8 @@ footer {
 /* Ajustes para mobile pequeno (até 480px) */
 @media (max-width: 480px) {
     .hero {
-        padding: 120px 0 50px;
+        padding: 80px 0 40px;
+        min-height: 300px; /* Mais achatado em mobile muito pequeno */
     }
     
     .hero h1 {
@@ -1763,6 +1772,18 @@ footer {
     }
     
     .subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+    }
+    
+    .cta-buttons {
+        gap: 10px;
+    }
+    
+    .whatsapp-btn,
+    .secondary-btn {
+        max-width: 280px;
+        padding: 12px 20px;
         font-size: 1rem;
     }
     
@@ -1823,6 +1844,19 @@ footer {
 
 /* Ajustes para telas muito pequenas (até 360px) */
 @media (max-width: 360px) {
+    .hero {
+        padding: 70px 0 30px;
+        min-height: 280px;
+    }
+    
+    .hero h1 {
+        font-size: 1.6rem;
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+    }
+    
     .pacote-card {
         min-width: 170px !important;
         max-width: 170px !important;
@@ -1837,44 +1871,41 @@ footer {
         font-size: 1.2rem;
     }
     
-    .hero h1 {
-        font-size: 1.6rem;
-    }
-    
     .whatsapp-btn,
     .secondary-btn {
-        padding: 12px 20px;
-        font-size: 1rem;
+        padding: 10px 15px;
+        font-size: 0.95rem;
     }
 }
 
 /* Ajuste para dispositivos em modo paisagem (landscape) */
 @media (max-height: 500px) and (orientation: landscape) {
     .hero {
-        padding: 100px 0 40px;
-        min-height: auto;
+        padding: 90px 0 30px;
+        min-height: 300px;
     }
     
     .hero h1 {
         font-size: 1.8rem;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     
     .subtitle {
         font-size: 0.9rem;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
     
     .cta-buttons {
         flex-direction: row;
         flex-wrap: wrap;
         gap: 10px;
+        margin-top: 15px;
     }
     
     .whatsapp-btn,
     .secondary-btn {
         width: auto;
-        padding: 10px 20px;
+        padding: 8px 15px;
         font-size: 0.9rem;
     }
     
@@ -1891,8 +1922,8 @@ footer {
 /* Ajuste para telas baixas */
 @media (max-height: 600px) {
     .hero {
-        padding: 120px 0 50px;
-        min-height: auto;
+        padding: 100px 0 40px;
+        min-height: 320px;
     }
     
     .testimonial-img {
@@ -1906,7 +1937,7 @@ footer {
 }
 
 /* Ajuste de espaçamento entre seções */
-section + section {
+.hero + section {
     margin-top: 0;
 }
 
