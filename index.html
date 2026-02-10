@@ -1063,26 +1063,13 @@
 
     <!-- JavaScript -->
     <script src="assets/js/main.js"></script>
-<!-- Inicialização otimizada para performance -->
-<script>
-// Apenas marcação para CSS
-document.addEventListener('DOMContentLoaded', function() {
-    document.body.classList.add('js-loaded');
-    
-    // Otimização simples para mobile
-    if (window.innerWidth <= 768) {
-        document.body.classList.add('is-mobile');
-        
-        // Forçar layout consistente após carregamento
-        setTimeout(function() {
-            document.querySelectorAll('.carrossel-inner').forEach(function(carousel) {
-                if (carousel.scrollWidth > carousel.clientWidth) {
-                    carousel.style.cursor = 'grab';
-                }
-            });
-        }, 500);
-    }
-});
-</script>
+
+    <script>
+        // Feedback visual para CSS
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.add('js-loaded');
+            if (window.innerWidth <= 768) document.body.classList.add('is-mobile');
+        });
+    </script>
 </body>
 </html>
