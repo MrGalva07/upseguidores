@@ -315,7 +315,7 @@ nav ul li a:hover {
     color: #666;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .pacote-preco-antigo {
@@ -364,7 +364,7 @@ nav ul li a:hover {
     color: #000;
     padding: 6px 12px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.65rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -422,7 +422,7 @@ nav ul li a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 6px;
     width: 100%;
     margin-top: auto;
 }
@@ -1330,7 +1330,7 @@ footer {
 
 .economia-badge.low-discount {
     background: linear-gradient(135deg, #FFC107, #FF9800);
-    color: #000;
+    color: #fff;
 }
 
 .economia-badge.medium-discount {
@@ -1511,7 +1511,7 @@ footer {
     }
     
     .economia-badge {
-        font-size: 0.75rem;
+        font-size: 0.55rem;
         padding: 4px 8px;
         margin-bottom: 5px;
         white-space: nowrap;
@@ -1519,7 +1519,7 @@ footer {
     
     .whatsapp-pacote-btn {
         padding: 10px 15px;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         border-radius: 8px;
         margin-top: 10px;
     }
@@ -1779,7 +1779,7 @@ footer {
     }
     
     .preco-novo {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
     }
     
     .pix-icon {
@@ -1789,7 +1789,7 @@ footer {
     
     .whatsapp-pacote-btn {
         padding: 10px 15px;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
     }
     
     .perfil-instagram {
